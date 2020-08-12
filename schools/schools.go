@@ -93,7 +93,7 @@ func (s *School) SaveSchool() (err error){
 	}
 
 	if strings.Title(strings.ToLower(strings.TrimSpace(s.School))) != "" && s.SchoolIcon != ""{
-		stmt,err := db.Prepare("INSERT INTO schools (school,school_icon,created_at,updated_at) VALUES(?,?,NOW(),NOW())")
+		stmt,err := db.Prepare("INSERT INTO schools (school,school_icon) VALUES(?,?)")
 
 		if err != nil{
 			return err
