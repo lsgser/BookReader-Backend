@@ -75,15 +75,15 @@ func GetFaculty(f int64) (Faculty, error) {
 		return faculty, err
 	}
 
-	schoolidQuery, err := database.Prepare("SELECT * FROM faculties WHERE school_id=?")
+	idQuery, err := database.Prepare("SELECT * FROM faculties WHERE id=?")
 
 	if err != nil {
 		return faculty, err
 	}
 
-	defer schoolidQuery.Close()
+	defer idQuery.Close()
 
-	err = schoolidQuery.QueryRow(f).Scan(&faculty.ID, &faculty.School, &faculty.Faculty, &faculty.CreatedAt, &faculty.UpdatedAt)
+	err = idQuery.QueryRow(f).Scan(&faculty.ID, &faculty.School, &faculty.Faculty, &faculty.CreatedAt, &faculty.UpdatedAt)
 
 	if err != nil {
 		return faculty, err
