@@ -2,6 +2,8 @@ package routes
 
 import (
 	F "../faculties"
+	C "../courses"
+	M "../modules"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -28,8 +30,14 @@ func NewRouter() *httprouter.Router {
 	router.GET("/faculty/:f", F.ShowFaculty)
 
 	//Courses
-	//router.GET("/courses/:f",C.ShowCoursesByFaculty)
-	//router.GET("/courses/:s",C.ShowCoursesBySchool)
-	//Srouter.GET("/course/:c",C.ShowCourse)
+	router.GET("/courses/:f",C.ShowCoursesByFaculty)
+	router.GET("/courses/:s",C.ShowCoursesBySchool)
+	router.GET("/course/:c",C.ShowCourse)
+
+	//Modules
+	router.GET("/modules/:f",M.ShowModulesByFaculty)
+	router.GET("/modules/:s",M.ShowModulesBySchool)
+	router.GET("/modules/:c",M.ShowModulesByCourse)
+	router.GET("/module/:m",M.ShowModule)
 	return router
 }

@@ -12,7 +12,7 @@ type Course struct{
 	Faculty int64 `json:"faculty"`
 	Course string `json:"course"`
 	CreatedAt string `json:"created_at,omitempty"`
-	UpdatedAt string `json:"UpdatedAt,omitempty"`
+	UpdatedAt string `json:"updated_at,omitempty"`
 }
 
 /*
@@ -23,11 +23,11 @@ func NewCourse() *Course{
 }
 
 /*
-	getCoursesBySchool() will accept a school/university parameter
+	GetCoursesBySchool() will accept a school/university parameter
 	and use that to get all the courses of the university then 
 	it will return all the courses of that school
 */
-func getCoursesBySchool(school int64)([]Course,error){
+func GetCoursesBySchool(school int64)([]Course,error){
 	courses := make([]Course,0)
 	/*
 		CODE
@@ -56,11 +56,11 @@ func getCoursesBySchool(school int64)([]Course,error){
 }
 
 /*
-	getCoursesByFaculty() will accept a faculty parameter
+	GetCoursesByFaculty() will accept a faculty parameter
 	and use that to get all the courses of the university then 
 	it will return all the courses of that faculty
 */
-func getCoursesByFaculty(faculty int64)([]Course,error){
+func GetCoursesByFaculty(faculty int64)([]Course,error){
 	courses := make([]Course,0)
 	
 	/*
@@ -90,10 +90,10 @@ func getCoursesByFaculty(faculty int64)([]Course,error){
 }
 
 /*
-	getCourse will return take in a course id parameter i.e param called c and return 
+	GetCourse will return take in a course id parameter i.e param called c and return 
 	the single course struct based on the course id
 */
-func getCourse(c int64) (Course,error){
+func GetCourse(c int64) (Course,error){
 	course := Course{}
 	/*
 		CODE

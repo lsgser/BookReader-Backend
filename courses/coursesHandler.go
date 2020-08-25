@@ -30,7 +30,7 @@ func ShowCoursesBySchool(w http.ResponseWriter,res *http.Request,params httprout
 		return
 	}
 
-	courses,err := getCoursesBySchool(s)
+	courses,err := GetCoursesBySchool(s)
 	
 	if err != nil{
 		w.WriteHeader(500)
@@ -69,7 +69,7 @@ func ShowCoursesByFaculty(w http.ResponseWriter,res *http.Request,params httprou
 		return
 	}
 
-	courses,err := getCoursesByFaculty(f)
+	courses,err := GetCoursesByFaculty(f)
 	
 	if err != nil{
 		w.WriteHeader(500)
@@ -96,7 +96,7 @@ func ShowCourse(w http.ResponseWriter,res *http.Request,params httprouter.Params
 
 	if c == ""{
 		w.WriteHeader(400)
-		w.Write([]byte(`{"status":"Faculty was not provided"}`))
+		w.Write([]byte(`{"status":"Course was not provided"}`))
 		return
 	}
 
@@ -108,7 +108,7 @@ func ShowCourse(w http.ResponseWriter,res *http.Request,params httprouter.Params
 		return
 	}
 
-	course,err := getCourse(crs)
+	course,err := GetCourse(crs)
 	
 	if err != nil{
 		w.WriteHeader(500)
