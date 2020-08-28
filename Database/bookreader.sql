@@ -58,7 +58,7 @@ CREATE TABLE `users` (
 	`school_id` bigint(20) unsigned NOT NULL,
 	`faculty_id` bigint(20) unsigned NOT NULL,
 	`course_id` bigint(20) unsigned NOT NULL,
-	`student_nr` bigint(20) unsigned NOT NULL UNIQUE,
+	`student_nr` varchar(255) NOT NULL UNIQUE,
 	`name` varchar(255) NOT NULL,
 	`surname` varchar(255) NOT NULL,
 	`email` varchar(255) NOT NULL UNIQUE,
