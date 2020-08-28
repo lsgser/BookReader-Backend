@@ -92,7 +92,9 @@ func (s *School) SaveSchool() (err error){
 		return err
 	}
 
-	if strings.Title(strings.ToLower(strings.TrimSpace(s.School))) != "" && s.SchoolIcon != ""{
+	s.School = strings.ToUpper(strings.TrimSpace(s.School))
+
+	if s.School != "" && s.SchoolIcon != ""{
 		stmt,err := db.Prepare("INSERT INTO schools (school,school_icon) VALUES(?,?)")
 
 		if err != nil{
@@ -117,6 +119,10 @@ func (s *School) SaveSchool() (err error){
 func (s *EditForm) EditSchool() (err error){
 	school := EditForm{}
 
+	s.School = string.ToUpper(strings.TrimSpace(s.School))
+	s.NewSchoolName =  string.ToUpper(strings.TrimSpace(s.NewSchoolName))
+	s.NewSchoolIcon = strings.TrimSpace(s.NewSchoolIcon)
+
 	db,err := CO.GetDB()
 
 	if err != nil{
@@ -131,7 +137,7 @@ func (s *EditForm) EditSchool() (err error){
 	/*
 		Check if the school exists
 	*/
-	if strings.TrimSpace(s.School) != "" {
+	if  s.School != "" {
 		schoolStmt,err := db.Prepare("SELECT school FROM schools WHERE school = ?")
 
 		if err != nil{
@@ -140,29 +146,30 @@ func (s *EditForm) EditSchool() (err error){
 
 		defer schoolStmt.Close()
 
-		err = schoolStmt.QueryRow(strings.TrimSpace(s.School)).Scan(&school.School)
+		err = schoolStmt.QueryRow(s.School).Scan(&school.School)
 
 		if err != nil{
 			return err
 		}
 
-		if strings.TrimSpace(s.NewSchoolName) != ""{
-			if strings.TrimSpace(s.NewSchoolName) != strings.TrimSpace(school.School){
-				editNameStmt,err := db.Prepare("UPDATE schools SET school = ?,updated_at=NOW() WHERE school=?")
+		school.School  = strings.ToUpper(strings.TrimSpace(school.School))
+		if s.NewSchoolName != ""{
+			if s.NewSchoolName != school.School{
+				editNameStmt,err := db.Prepare("UPDATE schools SET school = ? WHERE school=?")
 
 				if err != nil{
 					return err
 				}
 
-				_,err = editNameStmt.Exec(strings.TrimSpace(s.NewSchoolName),school.School)
+				_,err = editNameStmt.Exec(s.NewSchoolName,school.School)
 
 			}else{
 				err = errors.New("Can't edit a name using the same institution name.")
 			}
 		}
 
-		if strings.TrimSpace(s.NewSchoolIcon) != ""{
-			editIconStmt,err := db.Prepare("UPDATE schools SET school_icon = ?,updated_at=NOW() WHERE school=?")
+		if s.NewSchoolIcon != ""{
+			editIconStmt,err := db.Prepare("UPDATE schools SET school_icon = ? WHERE school=?")
 
 			if err != nil{
 				return err
@@ -185,18 +192,20 @@ func (s *EditForm) EditSchool() (err error){
 func DeleteSchool(school string) (err error){
 	db,err := CO.GetDB()
 
+	school = strings.strings.ToUpper(strings.TrimSpace(school))
+
 	if err != nil{
 		return err
 	}
 
-	if strings.Title(strings.ToLower(strings.TrimSpace(s.School))) != ""{
+	if school != ""{
 		delSchool,err := db.Prepare("DELETE FROM schools WHERE school = ?")
 
 		if err != nil{
 			return err
 		}
 
-		_,err = delSchool.Exec(strings.TrimSpace(s.School))
+		_,err = delSchool.Exec(school)
 	}else{
 		err = errors.New("Select an institution to delete")
 	}

@@ -4,6 +4,7 @@ import (
 	F "../faculties"
 	C "../courses"
 	M "../modules"
+	B "../books"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -35,9 +36,14 @@ func NewRouter() *httprouter.Router {
 	router.GET("/course/:c",C.ShowCourse)
 
 	//Modules
-	router.GET("/modules/:f",M.ShowModulesByFaculty)
-	router.GET("/modules/:s",M.ShowModulesBySchool)
-	router.GET("/modules/:c",M.ShowModulesByCourse)
+	router.GET("/modules_f/:f",M.ShowModulesByFaculty)
+	router.GET("/modules_s/:s",M.ShowModulesBySchool)
+	router.GET("/modules_c/:c",M.ShowModulesByCourse)
 	router.GET("/module/:m",M.ShowModule)
+
+	//Books
+	router.GET("/books",B.ShowBooks)
+	router.GET("/book_q/:q",B.ShowBooksByQuery)
+	router.GET("/book/:b",B.ShowBook)
 	return router
 }
