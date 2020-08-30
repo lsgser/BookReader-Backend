@@ -18,8 +18,8 @@ func NewRouter() *httprouter.Router {
 	router.GET("/faculty/:f", F.ShowFaculty)
 
 	//Courses
-	router.GET("/courses/:f",C.ShowCoursesByFaculty)
-	router.GET("/courses/:s",C.ShowCoursesBySchool)
+	router.GET("/courses_f/:f",C.ShowCoursesByFaculty)
+	router.GET("/courses_s/:s",C.ShowCoursesBySchool)
 	router.GET("/course/:c",C.ShowCourse)
 
 	//Modules
