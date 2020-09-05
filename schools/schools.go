@@ -53,7 +53,7 @@ func GetSchools() ([]School,error){
 	for rows.Next(){
 		s := School{}
 		rows.Scan(&s.School,&s.SchoolIcon)
-		schools = append(schools,school)
+		schools = append(schools,s)
 	}
 
 	return schools,nil
@@ -61,27 +61,27 @@ func GetSchools() ([]School,error){
 
 //GetSchool returns a school based on the school string that's provided 
 func GetSchool(school string) (School,error){
-	school := School{}
+	s := School{}
 	db,err := CO.GetDB()
 
 	if err != nil{
-		return school,err
+		return s,err
 	}
 
 	stmt,err := db.Prepare("SELECT school,school_icon FROM schools WHERE school=?")
 
 	if err != nil{
-		return school,err
+		return s,err
 	}
 
 	defer stmt.Close()
-	err = stmt.QueryRow(school).Scan(&school.School,&school.SchoolIcon)
+	err = stmt.QueryRow(school).Scan(&s.School,&s.SchoolIcon)
 
 	if err != nil{
-		return school,err
+		return s,err
 	}
 
-	return school,nil
+	return s,nil
 }
 
 //SaveSchool is a method that will return an error if the school data cannot be saved
@@ -101,7 +101,7 @@ func (s *School) SaveSchool() (err error){
 			return err
 		}
 
-		_,err = db.Exec(s.School,s.SchoolIcon)
+		_,err = stmt.Exec(s.School,s.SchoolIcon)
 
 		if err != nil{
 			return err
@@ -119,8 +119,8 @@ func (s *School) SaveSchool() (err error){
 func (s *EditForm) EditSchool() (err error){
 	school := EditForm{}
 
-	s.School = string.ToUpper(strings.TrimSpace(s.School))
-	s.NewSchoolName =  string.ToUpper(strings.TrimSpace(s.NewSchoolName))
+	s.School = strings.ToUpper(strings.TrimSpace(s.School))
+	s.NewSchoolName =  strings.ToUpper(strings.TrimSpace(s.NewSchoolName))
 	s.NewSchoolIcon = strings.TrimSpace(s.NewSchoolIcon)
 
 	db,err := CO.GetDB()
@@ -192,7 +192,7 @@ func (s *EditForm) EditSchool() (err error){
 func DeleteSchool(school string) (err error){
 	db,err := CO.GetDB()
 
-	school = strings.strings.ToUpper(strings.TrimSpace(school))
+	school = strings.ToUpper(strings.TrimSpace(school))
 
 	if err != nil{
 		return err

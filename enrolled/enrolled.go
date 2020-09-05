@@ -3,6 +3,7 @@ package enrolled
 import(
 	CO "../config"
 	M "../modules"
+	U "../users"
 	//"strings"
 	"errors"
 )
@@ -38,7 +39,7 @@ func GetEnrolledByModule(module int64) ([]Enrol,error){
 
 	for rows.Next(){
 		enrol := Enrol{}
-		enrol.Scan(&enrol.ID,&enrol.Module,&enrol.User,&enrol.CreatedAt,&enrol.UpdatedAt)
+		rows.Scan(&enrol.ID,&enrol.Module,&enrol.User,&enrol.CreatedAt,&enrol.UpdatedAt)
 		enrolled = append(enrolled,enrol)
 	}
 
@@ -54,7 +55,21 @@ func GetEnrolledByUser(user string) ([]Enrol,error){
 		return enrolled,err
 	}
 	
-	rows,err := db.Query("SELECT * FROM enrolled WHERE user_id = ?",user)
+	stmt,err := db.Prepare("SELECT id FROM users WHERE student_nr=?")
+
+	if err != nil{
+		return enrolled,err
+	}
+
+	defer stmt.Close()
+	var user_id int64
+
+	err = stmt.QueryRow(user).Scan(&user_id)
+	if err != nil{
+		return enrolled,err
+	}
+
+	rows,err := db.Query("SELECT * FROM enrolled WHERE user_id = ?",user_id)
 
 	if err != nil{
 		return enrolled,err
@@ -64,7 +79,7 @@ func GetEnrolledByUser(user string) ([]Enrol,error){
 
 	for rows.Next(){
 		enrol := Enrol{}
-		enrol.Scan(&enrol.ID,&enrol.Module,&enrol.User,&enrol.CreatedAt,&enrol.UpdatedAt)
+		rows.Scan(&enrol.ID,&enrol.Module,&enrol.User,&enrol.CreatedAt,&enrol.UpdatedAt)
 		enrolled = append(enrolled,enrol)
 	}
 
@@ -85,8 +100,21 @@ func GetEnrolledModules(user string) ([]M.Module,error){
 		err = errors.New("DB connection error")
 		return modules,err			
 	}
+	stmt,err := db.Prepare("SELECT id FROM users WHERE student_nr=?")
 
-	rows,err := db.Query("SELECT * FROM enrolled WHERE user_id = ?",user)
+	if err != nil{
+		return modules,err
+	}
+
+	defer stmt.Close()
+	var user_id int64
+	err = stmt.QueryRow(user).Scan(&user_id)
+	
+	if err != nil{
+		return modules,err
+	}
+
+	rows,err := db.Query("SELECT * FROM enrolled WHERE user_id = ?",user_id)
 
 	if err != nil{
 		return modules,err
@@ -97,7 +125,7 @@ func GetEnrolledModules(user string) ([]M.Module,error){
 	for rows.Next(){
 		enrol := Enrol{}
 		module := M.Module{}
-		enrol.Scan(&enrol.ID,&enrol.Module,&enrol.User,&enrol.CreatedAt,&enrol.UpdatedAt)
+		rows.Scan(&enrol.ID,&enrol.Module,&enrol.User,&enrol.CreatedAt,&enrol.UpdatedAt)
 		stmt,err := db.Prepare("SELECT * FROM modules WHERE id = ?")
 
 		if err != nil{
@@ -144,7 +172,7 @@ func GetEnrolledUsers(module int64) ([]U.User,error){
 	for rows.Next(){
 		enrol := Enrol{}
 		user := U.User{}
-		enrol.Scan(&enrol.ID,&enrol.Module,&enrol.User,&enrol.CreatedAt,&enrol.UpdatedAt)
+		rows.Scan(&enrol.ID,&enrol.Module,&enrol.User,&enrol.CreatedAt,&enrol.UpdatedAt)
 		stmt,err := db.Prepare("SELECT * FROM users WHERE id = ?")
 
 		if err != nil{

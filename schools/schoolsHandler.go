@@ -12,7 +12,7 @@ import(
 */
 func ShowSchools(w http.ResponseWriter , req *http.Request , _ httprouter.Params){
 	CO.AddSafeHeaders(&w)
-	schools,err := GetSchoolsUsers()
+	schools,err := GetSchools()
 
 	if err != nil{
 		w.WriteHeader(500)
