@@ -23,7 +23,7 @@ func ShowSchools(w http.ResponseWriter , req *http.Request , _ httprouter.Params
 	err = json.NewEncoder(w).Encode(schools)
 
 	if err != nil{
-		w.WriteHeader(500)
+		w.WriteHeader(400)
 		w.Write([]byte(`{"status":"Something went wrong"}`))
 		return
 	}	
@@ -46,7 +46,7 @@ func ShowSchool(w http.ResponseWriter , req *http.Request , params httprouter.Pa
 	school,err := GetSchool(schoolName)
 
 	if err != nil{
-		w.WriteHeader(400)
+		w.WriteHeader(500)
 		w.Write([]byte(`{"status":"`+err.Error()+`"}`))
 		return	
 	}

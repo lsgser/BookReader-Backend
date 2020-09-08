@@ -8,6 +8,7 @@ import (
 	U "../users"
 	E "../enrolled"
 	S "../schools"
+	R "../required"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -48,5 +49,9 @@ func NewRouter() *httprouter.Router {
 	router.GET("/schools",S.ShowSchools)
 	router.GET("/school/:s",S.ShowSchool)
 
+	//Required
+	router.GET("/required_by_user/:u",R.ShowRequiredByUser)
+	router.GET("/required_by_module/:m",R.ShowRequiredByModule)
+	router.GET("/required_by_book/:isbn",R.ShowRequiredByBook)
 	return router
 }
