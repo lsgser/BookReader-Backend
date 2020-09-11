@@ -8,7 +8,7 @@ import(
 	CO "../config"
 )
 
-func ShowModulesBySchool(w http.ResponseWriter,res *http.Request,params httprouter.Params){
+func ShowModulesBySchool(w http.ResponseWriter,req *http.Request,params httprouter.Params){
 	CO.AddSafeHeaders(&w)
 
 	school := params.ByName("s")
@@ -44,7 +44,7 @@ func ShowModulesBySchool(w http.ResponseWriter,res *http.Request,params httprout
 	}
 }
 
-func ShowModulesByFaculty(w http.ResponseWriter,res *http.Request,params httprouter.Params){
+func ShowModulesByFaculty(w http.ResponseWriter,req *http.Request,params httprouter.Params){
 	CO.AddSafeHeaders(&w)
 
 	faculty := params.ByName("f")
@@ -80,7 +80,7 @@ func ShowModulesByFaculty(w http.ResponseWriter,res *http.Request,params httprou
 	}
 }
 
-func ShowModulesByCourse(w http.ResponseWriter,res *http.Request,params httprouter.Params){
+func ShowModulesByCourse(w http.ResponseWriter,req *http.Request,params httprouter.Params){
 	CO.AddSafeHeaders(&w)
 
 	course := params.ByName("c")
@@ -116,7 +116,7 @@ func ShowModulesByCourse(w http.ResponseWriter,res *http.Request,params httprout
 	}
 }
 
-func ShowModule(w http.ResponseWriter,res *http.Request,params httprouter.Params){
+func ShowModule(w http.ResponseWriter,req *http.Request,params httprouter.Params){
 	CO.AddSafeHeaders(&w)
 
 	module := params.ByName("m")

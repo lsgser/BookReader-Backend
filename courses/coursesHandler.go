@@ -11,7 +11,7 @@ import(
 /*
 	Display courses by school/university ID
 */
-func ShowCoursesBySchool(w http.ResponseWriter,res *http.Request,params httprouter.Params){
+func ShowCoursesBySchool(w http.ResponseWriter,req *http.Request,params httprouter.Params){
 	CO.AddSafeHeaders(&w)
 
 	school := params.ByName("s")
@@ -50,7 +50,7 @@ func ShowCoursesBySchool(w http.ResponseWriter,res *http.Request,params httprout
 /*
 	Display courses by faculty ID
 */
-func ShowCoursesByFaculty(w http.ResponseWriter,res *http.Request,params httprouter.Params){
+func ShowCoursesByFaculty(w http.ResponseWriter,req *http.Request,params httprouter.Params){
 	CO.AddSafeHeaders(&w)
 
 	faculty := params.ByName("f")
@@ -89,7 +89,7 @@ func ShowCoursesByFaculty(w http.ResponseWriter,res *http.Request,params httprou
 /*
 	Display a single course
 */
-func ShowCourse(w http.ResponseWriter,res *http.Request,params httprouter.Params){
+func ShowCourse(w http.ResponseWriter,req *http.Request,params httprouter.Params){
 	CO.AddSafeHeaders(&w)
 
 	c := params.ByName("c")

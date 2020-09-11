@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"io"
 	"crypto/rand"
+	"crypto/sha1"
 	"fmt"
 )
 
@@ -26,6 +27,19 @@ func HashPassword(password string) ([]byte,error){
 	return bcrypt.GenerateFromPassword([]byte(password),bcrypt.MinCost)
 }
 
+//Hash a token or other non-password data using the sha1 hashing algorithm
+func HashData(data string) ([20]byte){
+	d := []byte(data)
+	hashedData := sha1.Sum(d)
+	return hashedData
+}
+
+//Check if the password is valid
+func CheckPassword(hashedPassword,password string) error{
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+
+	return err
+}
 
 //These header is for when a request
 func AddSafeHeaders(w *http.ResponseWriter){
@@ -70,4 +84,23 @@ func GenerateID(prefix string,length int) string{
 	}
 	// Return the formatted id
 	return fmt.Sprintf("%s_%s", prefix, string(id))
+}
+
+//GenerateToken() creates a random string/token
+func GenerateToken(length int) string{
+	//Source String used when generating a random identifier.
+	const idSource = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+
+	// Save the length in a constant so we don't look it up each time.
+	const idSourceLen = byte(len(idSource))
+	// Create an array with the correct capacity
+	id := make([]byte, length)
+	// Fill our array with random numbers
+	rand.Read(id)
+	// Replace each random number with an alphanumeric value
+	for i, b := range id {
+		id[i] = idSource[b%idSourceLen]
+	}
+	// Return the formatted id
+	return fmt.Sprintf("%s",string(id))
 }

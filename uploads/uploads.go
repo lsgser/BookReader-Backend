@@ -80,3 +80,7 @@ func SingleFileUpload(file multipart.File,handler *multipart.FileHeader)(string,
 	return dbFileName,nil
 }
 
+/*
+	Create file upload function for a book,remeber that
+	the contentType for a PDF is application/pdf
+*/
