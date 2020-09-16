@@ -200,7 +200,7 @@ func AuthAdmin(email string,password string)(string,error){
 	with logging out the admin
 	user
 */
-func DeleteAdminAuth(token string) (error){
+func DeleteAdminAuth(token string) error{
 	db,err := CO.GetDB()
 	if err != nil{
 		err = errors.New("DB connection error")

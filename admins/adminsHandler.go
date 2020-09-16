@@ -80,5 +80,24 @@ func AdminLogged(w http.ResponseWriter , req *http.Request, params httprouter.Pa
 
 	w.WriteHeader(200)
 	w.Write([]byte(`{"status":"Logged in"}`))
-	return
+}
+
+/*
+	Logout admin
+*/
+func AdminSignOut(w http.ResponseWriter , req *http.Request, params httprouter.Params){
+	CO.AddSafeHeaders(&w)
+
+	token := params.ByName("t")
+
+	err := AdminLogout(token)
+
+	if err != nil{
+		w.WriteHeader(500)
+		w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+		return
+	}
+
+	w.WriteHeader(200)
+	w.Write([]byte(`{"status":"Logged out"}`))
 }

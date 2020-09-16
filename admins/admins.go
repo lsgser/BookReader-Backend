@@ -114,3 +114,9 @@ func AdminIsLoggedIn(token string) bool{
 
 	return isLogged
 }
+
+func AdminLogout(token string) error{
+	err := A.DeleteAdminAuth(token)
+
+	return err
+}

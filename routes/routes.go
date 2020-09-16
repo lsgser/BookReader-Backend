@@ -59,5 +59,7 @@ func NewRouter() *httprouter.Router {
 	router.POST("/newadmin",A.AddAdmin)
 	router.POST("/admin_login",A.LoginAdmin)
 	router.GET("/admin_logged/:t",A.AdminLogged)
+	router.DELETE("/admin_logout/:t",A.AdminSignOut)
+	
 	return router
 }
