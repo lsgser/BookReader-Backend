@@ -6,6 +6,8 @@ import(
 	"strings"
 	"database/sql"
 	"errors"
+	"log"
+	"unicode/utf8"
 )
 
 /*
@@ -49,7 +51,7 @@ func CheckAdmin(token string) bool{
 	}
 
 	hashedToken := CO.HashData(token)
-
+	log.Println("Token: %s",hashedToken)
 	stmt,err := db.Prepare("SELECT user_id FROM admin_login_tokens WHERE token = ?")
 
 	if err != nil{
@@ -64,7 +66,7 @@ func CheckAdmin(token string) bool{
 	if err != nil{
 		return false
 	}
-
+	log.Printf("Correct Check")
 	return true
 }
 
@@ -81,12 +83,11 @@ func AuthAdmin(email string,password string)(string,error){
 	}
 
 	password = strings.TrimSpace(password)
+
 	if password == ""{
 		err = errors.New("Enter your password")
 		return "",err
 	}
-	
-	hashed,err := CO.HashPassword(password)
 
 	if err != nil{
 		return "",err
@@ -97,7 +98,7 @@ func AuthAdmin(email string,password string)(string,error){
 		return "",err
 	}
 
-	stmt,err := db.Prepare("SELECT id FROM admins WHERE email = ? AND password = ?")
+	stmt,err := db.Prepare("SELECT * FROM admins WHERE email = ?")
 
 	if err != nil{
 		return "",err
@@ -114,10 +115,17 @@ func AuthAdmin(email string,password string)(string,error){
 		token string
 	) 
 
-	err = stmt.QueryRow(email,hashed).Scan(&id,&mail,&pass,&created_at,&updated_at)
+	err = stmt.QueryRow(email).Scan(&id,&mail,&pass,&created_at,&updated_at)
 
 	if err != nil{
-		err = errors.New("Email or Password is invalid")
+		err = errors.New("This admin does not exist")
+		return "",err
+	}
+
+	err = CO.CheckPassword(pass,password)
+
+	if err != nil{
+		err = errors.New("Wrong password")
 		return "",err
 	}
 
@@ -164,8 +172,20 @@ func AuthAdmin(email string,password string)(string,error){
 	/*
 		Create a token
 	*/
-	token = CO.GenerateToken(16)
+	token = CO.GenerateToken(32)
+	log.Println("%T",token)
+	if utf8.ValidString(token){
+		log.Println("Valid")
+	}else{
+		log.Println("Invalid")
+	}
 	hashedToken := CO.HashData(token)
+	if utf8.ValidString(hashedToken){
+		log.Println("Valid hash")
+	}else{
+		log.Println("Invalid hash")
+		log.Println(hashedToken)
+	}
 	_,err = authQuery.Exec(id,hashedToken)
 
 	if err != nil{

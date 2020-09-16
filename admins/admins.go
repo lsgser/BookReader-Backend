@@ -27,7 +27,7 @@ func NewAdmin() *Admin{
 	allocates a token along with the 
 	admins email
 */
-func (a *Admin) AdminLogin()(string,error){
+func (a *Admin) AdminLogin() (string,error){
 	if strings.TrimSpace(a.Email) == "" || strings.TrimSpace(a.Password) == ""{
 		err := errors.New("Fill in all fields")
 		return "",err
@@ -107,4 +107,10 @@ func (a *Admin) SaveAdmin() (err error){
 	}
 
 	return nil
+}
+
+func AdminIsLoggedIn(token string) bool{
+	isLogged := A.CheckAdmin(token)
+
+	return isLogged
 }

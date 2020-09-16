@@ -8,6 +8,7 @@ import (
 	"crypto/rand"
 	"crypto/sha1"
 	"fmt"
+	"encoding/hex"
 )
 
 // MakeTimestamp function that works for MYSQL,it works on the datetime MySQL type
@@ -28,10 +29,17 @@ func HashPassword(password string) ([]byte,error){
 }
 
 //Hash a token or other non-password data using the sha1 hashing algorithm
-func HashData(data string) ([20]byte){
-	d := []byte(data)
-	hashedData := sha1.Sum(d)
-	return hashedData
+func HashData(data string) string{
+	//d := []byte(data)
+	//hashedDataArr := sha1.Sum(d)
+	//hashedDataSlice := hashedDataArr[:]
+
+	//return hashedDataSlice
+	h := sha1.New()
+	h.Write([]byte(data))
+	sha1_hash := hex.EncodeToString(h.Sum(nil))
+
+	return sha1_hash
 }
 
 //Check if the password is valid

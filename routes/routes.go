@@ -57,5 +57,7 @@ func NewRouter() *httprouter.Router {
 
 	//Admin
 	router.POST("/newadmin",A.AddAdmin)
+	router.POST("/admin_login",A.LoginAdmin)
+	router.GET("/admin_logged/:t",A.AdminLogged)
 	return router
 }
