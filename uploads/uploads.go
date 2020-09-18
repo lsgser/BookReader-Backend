@@ -10,6 +10,14 @@ import(
 )
 
 /*
+	SETs a megabyte
+*/
+func GetMB() int64{
+	//We set a megabyte to a constant
+	var MB = 1 << 20
+	return int64(MB)
+}
+/*
 	SingleFileUpload
 	This function will read an image file and 
 	upload it to the server
@@ -17,7 +25,7 @@ import(
 	
 	This function can be modified for other file types i.e images,audio,etc
 */
-func SingleFileUpload(file multipart.File,handler *multipart.FileHeader)(string,error){
+func SingleFileUpload(file multipart.File,handler *multipart.FileHeader,path string,prefix string)(string,error){
 	var imageType string	
 	if handler.Filename == ""{
 		err := errors.New("File does not exist")
@@ -56,14 +64,14 @@ func SingleFileUpload(file multipart.File,handler *multipart.FileHeader)(string,
 	}
 	
 	//Use GenerateID to create a unique string
-	imageName := CO.GenerateID("pro_pic",16)
+	imageName := CO.GenerateID(prefix,16)
 	if err != nil{
 		return "",err
 	}
 	//This is the directory name of the folder that we want to save our image to
-	serverFileName := "./data/pictures/"+imageName+imageType
+	serverFileName := "."+path+imageName+imageType
 	//This will store the picture directory to the database
-	dbFileName := "/data/pictures/"+imageName+imageType
+	dbFileName := path+imageName+imageType
 	
 	out,err := os.Create(serverFileName)		
 	if err != nil{

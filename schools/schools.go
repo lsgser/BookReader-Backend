@@ -15,12 +15,14 @@ type School struct{
 	SchoolIcon string `json:"school_icon"`
 	CreatedAt string `json:"created_at,omitempty"`
 	UpdatedAt string `json:"updated_at,omitempty"`
+	Token string `json:"token,omitempty"`
 }
 
 type EditForm struct{
 	School string `json:"school,omitempty"`
 	NewSchoolName string `json:"new_school_name,omitempty"`
 	NewSchoolIcon string `json:"new_school_icon,omitempty"`
+	Token string `json:"token,omitempty"`
 }
 
 //NewSchool returns a pointer to a School struct
@@ -122,6 +124,10 @@ func (s *EditForm) EditSchool() (err error){
 	s.School = strings.ToUpper(strings.TrimSpace(s.School))
 	s.NewSchoolName =  strings.ToUpper(strings.TrimSpace(s.NewSchoolName))
 	s.NewSchoolIcon = strings.TrimSpace(s.NewSchoolIcon)
+	if s.Token == ""{
+		err = errors.New("Invalid login data")
+		return err
+	}
 
 	db,err := CO.GetDB()
 
@@ -189,7 +195,7 @@ func (s *EditForm) EditSchool() (err error){
 }
 
 //DeleteSchool is a function that will be used to delete a specific school
-func DeleteSchool(school string) (err error){
+func DeleteSchool(school string,token string) (err error){
 	db,err := CO.GetDB()
 
 	school = strings.ToUpper(strings.TrimSpace(school))

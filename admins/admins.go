@@ -109,6 +109,9 @@ func (a *Admin) SaveAdmin() (err error){
 	return nil
 }
 
+/*
+	Check if the admin is logged in
+*/
 func AdminIsLoggedIn(token string) bool{
 	isLogged := A.CheckAdmin(token)
 

@@ -20,6 +20,11 @@ func CheckUser(token string) bool{
 		return false
 	}
 
+	if strings.TrimSpace(token) == ""{
+		err = errors.New("Invalid session.")
+		return false
+	}
+	
 	hashedToken := CO.HashData(token)
 
 	stmt,err := db.Prepare("SELECT user_id FROM login_tokens WHERE token = ?")
@@ -50,8 +55,13 @@ func CheckAdmin(token string) bool{
 		return false
 	}
 
+	if strings.TrimSpace(token) == ""{
+		err = errors.New("Invalid session.")
+		return false
+	}
+
 	hashedToken := CO.HashData(token)
-	log.Println("Token: %s",hashedToken)
+	
 	stmt,err := db.Prepare("SELECT user_id FROM admin_login_tokens WHERE token = ?")
 
 	if err != nil{
@@ -66,7 +76,7 @@ func CheckAdmin(token string) bool{
 	if err != nil{
 		return false
 	}
-	log.Printf("Correct Check")
+
 	return true
 }
 

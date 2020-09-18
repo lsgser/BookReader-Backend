@@ -49,7 +49,8 @@ func NewRouter() *httprouter.Router {
 	//School
 	router.GET("/schools",S.ShowSchools)
 	router.GET("/school/:s",S.ShowSchool)
-
+	router.POST("/new_school",S.AddSchool)
+	
 	//Required
 	router.GET("/required_by_user/:u",R.ShowRequiredByUser)
 	router.GET("/required_by_module/:m",R.ShowRequiredByModule)
