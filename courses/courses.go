@@ -1,9 +1,9 @@
 package courses
 
 import(
-	//"errors"
+	"errors"
 	CO "../config"
-	//"strings"
+	"strings"
 )
 
 type Course struct{
@@ -13,6 +13,7 @@ type Course struct{
 	Course string `json:"course"`
 	CreatedAt string `json:"created_at,omitempty"`
 	UpdatedAt string `json:"updated_at,omitempty"`
+	Token string `json:"token,omitempty"`
 }
 
 /*
@@ -118,4 +119,46 @@ func GetCourse(c int64) (Course,error){
 		return course,err
 	}
 	return course,nil
+}
+
+func (c *Course) SaveCourse() error{
+	db,err := CO.GetDB()
+
+	if err != nil{
+		err = errors.New("DB connection error")
+		return err
+	}
+
+	var faculty string
+
+	facultyQuery,err := db.Prepare("SELECT faculty FROM faculties WHERE id = ? AND school_id = ?")
+
+	if err != nil{
+		return err
+	}
+
+	defer facultyQuery.Close()
+
+	err = facultyQuery.QueryRow(c.Faculty,c.School).Scan(&faculty)
+
+	if err != nil{
+		err = errors.New("Instituion or Faculty does not exist")
+		return err
+	}
+	
+	stmt,err := db.Prepare("INSERT INTO courses (school_id,faculty_id,course) VALUES(?,?,?)")
+
+	if err != nil{
+		return err
+	}
+
+	defer stmt.Close()
+
+	_,err = stmt.Exec(c.School,c.Faculty,strings.Title(strings.ToLower(c.Course)))
+
+	if err != nil{
+		return err
+	}
+
+	return err
 }

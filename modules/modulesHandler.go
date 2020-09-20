@@ -6,6 +6,7 @@ import(
 	"strconv"
 	"github.com/julienschmidt/httprouter"
 	CO "../config"
+	A "../auth"
 )
 
 func ShowModulesBySchool(w http.ResponseWriter,req *http.Request,params httprouter.Params){
@@ -150,4 +151,45 @@ func ShowModule(w http.ResponseWriter,req *http.Request,params httprouter.Params
 		w.Write([]byte(`{"status":"Something went wrong"}`))
 		return
 	}
+}
+
+/*
+	Adds a new module to the system
+*/
+func AddModule(w http.ResponseWriter,req *http.Request,_ httprouter.Params){
+	CO.AddSafeHeaders(&w)
+	body := req.Body
+	module:= NewModule()
+	defer body.Close()
+
+	err := json.NewDecoder(body).Decode(module)
+
+	if err != nil {
+		w.WriteHeader(400)
+		w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+		return
+	}
+
+	if A.CheckAdmin(module.Token){
+		if module.School != 0 && module.Faculty != 0 && module.Course != 0 && module.Module != ""{
+			err = module.SaveModule()
+			if err != nil{
+				w.WriteHeader(500)
+				w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+				return
+			}
+
+		}else{
+			w.WriteHeader(400)
+			w.Write([]byte(`{"status":"Fill/Select all required fields"}`))
+			return
+		}
+	}else{
+		w.WriteHeader(404)
+		w.Write([]byte(`{"status":"Invalid login session."}`))
+		return
+	}
+
+	w.WriteHeader(200)
+	w.Write([]byte(`{"status":"Success"}`))
 }

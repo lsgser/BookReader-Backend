@@ -3,7 +3,6 @@ package schools
 import(
 	"encoding/json"
 	"net/http"
-	"errors"
 	"github.com/julienschmidt/httprouter"
 	CO "../config"
 	UP "../uploads"
@@ -92,9 +91,8 @@ func AddSchool(w http.ResponseWriter, req *http.Request,_ httprouter.Params){
 		}
 
 		if file == nil{
-			err = errors.New("Institution icon was not included")
 			w.WriteHeader(400)
-			w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+			w.Write([]byte(`{"status":"Institution icon was not included"}`))
 			return
 		}else{
 			defer file.Close()
@@ -121,9 +119,8 @@ func AddSchool(w http.ResponseWriter, req *http.Request,_ httprouter.Params){
 		} 
 
 	}else{
-		err = errors.New("Invalid login session.")
 		w.WriteHeader(404)
-		w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+		w.Write([]byte(`{"status":"Invalid login session."}`))
 		return
 	}
 

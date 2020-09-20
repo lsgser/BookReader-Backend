@@ -20,18 +20,20 @@ func NewRouter() *httprouter.Router {
 	//Faculties
 	router.GET("/faculties/:s", F.ShowFaculties)
 	router.GET("/faculty/:f", F.ShowFaculty)
-
+	router.POST("/new_faculty",F.AddFaculty)
 	//Courses
 	router.GET("/courses_f/:f",C.ShowCoursesByFaculty)
 	router.GET("/courses_s/:s",C.ShowCoursesBySchool)
 	router.GET("/course/:c",C.ShowCourse)
+	router.POST("/new_course",C.AddCourse)
 
 	//Modules
 	router.GET("/modules_f/:f",M.ShowModulesByFaculty)
 	router.GET("/modules_s/:s",M.ShowModulesBySchool)
 	router.GET("/modules_c/:c",M.ShowModulesByCourse)
 	router.GET("/module/:m",M.ShowModule)
-
+	router.POST("/new_module",M.AddModule)
+	
 	//Books
 	router.GET("/books",B.ShowBooks)
 	router.GET("/book_q/:q",B.ShowBooksByQuery)
@@ -50,7 +52,7 @@ func NewRouter() *httprouter.Router {
 	router.GET("/schools",S.ShowSchools)
 	router.GET("/school/:s",S.ShowSchool)
 	router.POST("/new_school",S.AddSchool)
-	
+
 	//Required
 	router.GET("/required_by_user/:u",R.ShowRequiredByUser)
 	router.GET("/required_by_module/:m",R.ShowRequiredByModule)

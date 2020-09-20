@@ -4,9 +4,8 @@ package faculties
 import (
 	"errors"
 	"log"
-
 	CO "../config"
-	//"strings"
+	"strings"
 )
 
 //Faculty struct
@@ -16,6 +15,7 @@ type Faculty struct {
 	Faculty   string `json:"faculty,omitempty"` /*string type so this it the name of the faculty i.e Engineering*/
 	CreatedAt string `json:"created_at,omitempty"`
 	UpdatedAt string `json:"updated_at,omitempty"`
+	Token string `json:"token,omitempty"`
 }
 
 //NewFaculty returns a pointer struct of a Faculty type
@@ -66,7 +66,6 @@ func GetFaculties(s int64) ([]Faculty, error) {
 	type
 */
 func GetFaculty(f int64) (Faculty, error) {
-
 	faculty := Faculty{}
 	database, err := CO.GetDB()
 
@@ -90,4 +89,51 @@ func GetFaculty(f int64) (Faculty, error) {
 	}
 
 	return faculty, nil
+}
+
+
+/*
+  SaveFaculty adds a new faculty to
+  an institution
+*/
+func (f *Faculty) SaveFaculty() error{
+	db,err := CO.GetDB()
+
+	if err != nil{
+		err := errors.New("DB connection error")
+		return err
+	}
+
+	var school string
+	schoolQuery, err := db.Prepare("SELECT school FROM schools WHERE id=?")
+
+	if err != nil {
+		return err
+	}
+
+	defer schoolQuery.Close()
+
+	err = schoolQuery.QueryRow(f.School).Scan(&school)
+
+	if err != nil{
+		err = errors.New("The institution that you've selected does not exist.")
+		return err
+	}
+
+	stmt,err := db.Prepare("INSERT INTO faculties (school_id,faculty) VALUES(?,?)")
+
+	if err != nil{
+		return err
+	}
+	/*
+		strings.Title makes the first letter of every word a 
+		uppercase
+	*/
+	_,err = stmt.Exec(f.School,strings.Title(strings.ToLower(f.Faculty)))
+
+	if err != nil{
+		return err
+	}
+
+	return err
 }

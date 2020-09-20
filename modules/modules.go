@@ -2,6 +2,8 @@ package modules
 
 import (
 	CO "../config"
+	"strings"
+	"errors"
 )
 
 //Module Struct
@@ -13,6 +15,7 @@ type Module struct {
 	Module    string `json:"module"`
 	CreatedAt string `json:"created_at,omitempty"`
 	UpdatedAt string `json:"updated_at,omitempty"`
+	Token 	  string  `json:"token,omitempty"`
 }
 
 //NewModule()
@@ -143,4 +146,44 @@ func GetModule(m int64) (Module, error) {
 	}
 
 	return module, nil
+}
+
+
+/*
+	Save a new module to the database
+*/
+func (m *Module) SaveModule() error{
+	db,err := CO.GetDB()
+
+	if err != nil{
+		err = errors.New("DB connection error")
+		return err
+	}
+
+	var course string
+
+	courseQuery,err := db.Prepare("SELECT course FROM courses WHERE school_id = ? AND faculty_id = ? AND id = ?")
+
+	if err != nil{
+		return err
+	}
+
+	defer courseQuery.Close()
+
+	err = courseQuery.QueryRow(m.School,m.Faculty,m.Course).Scan(&course)
+
+	if err != nil{
+		err = errors.New("Institution / Faculty / Course does not exist")
+		return err
+	}
+
+	stmt,err := db.Prepare("INSERT INTO modules (school_id,faculty_id,course_id,module) VALUES(?,?,?,?)")
+
+	if err != nil{
+		return err
+	}
+
+	_,err = stmt.Exec(m.School,m.Faculty,m.Course,strings.Title(strings.ToLower(m.Module)))
+
+	return err
 }

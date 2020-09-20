@@ -6,6 +6,8 @@ import(
 	"strconv"
 	"github.com/julienschmidt/httprouter"
 	CO "../config"
+	A "../auth"
+	//"log"
 )
 
 /*
@@ -123,4 +125,43 @@ func ShowCourse(w http.ResponseWriter,req *http.Request,params httprouter.Params
 		w.Write([]byte(`{"status":"Something went wrong"}`))
 		return
 	}	
+}
+
+/*
+	Adds a new course
+*/
+func AddCourse(w http.ResponseWriter,req *http.Request,_ httprouter.Params){
+	CO.AddSafeHeaders(&w)
+	course := NewCourse()
+	body := req.Body
+	defer body.Close()
+	err := json.NewDecoder(body).Decode(course)
+
+	if err != nil{
+		w.WriteHeader(400)
+		w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+		return
+	}
+
+	if A.CheckAdmin(course.Token) {
+		if course.School != 0 && course.Faculty != 0 && course.Course != ""{
+			err = course.SaveCourse()
+			if err != nil{
+				w.WriteHeader(500)
+				w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+				return
+			}
+		}else{
+			w.WriteHeader(400)
+			w.Write([]byte(`{"status":"Fill/Select all the required fields"}`))
+			return
+		}
+	}else{
+		w.WriteHeader(404)
+		w.Write([]byte(`{"status":"Invalid login session."}`))
+		return
+	}
+
+	w.WriteHeader(200)
+	w.Write([]byte(`{"status":"Success"}`))
 }

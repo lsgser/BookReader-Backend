@@ -6,6 +6,8 @@ import (
 	"strconv"
 	CO "../config"
 	"github.com/julienschmidt/httprouter"
+	A "../auth"
+	//"log"
 )
 
 /*
@@ -85,3 +87,41 @@ func ShowFaculty(w http.ResponseWriter, req *http.Request, params httprouter.Par
 		return
 	}
 }
+
+func AddFaculty(w http.ResponseWriter, req *http.Request, _ httprouter.Params){
+	CO.AddSafeHeaders(&w)
+	body := req.Body
+	faculty := NewFaculty()
+	defer body.Close()
+	err := json.NewDecoder(body).Decode(faculty)
+
+	if err != nil{
+		w.WriteHeader(400)
+		w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+		return
+	}
+
+	if A.CheckAdmin(faculty.Token){
+		if faculty.School != 0 && faculty.Faculty != ""{
+			err = faculty.SaveFaculty()
+
+			if err != nil{
+				w.WriteHeader(500)
+				w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+				return
+			}
+		}else{
+			w.WriteHeader(400)
+			w.Write([]byte(`{"status":"All required fields were not provided."}`))
+			return
+		}
+	}else{
+		w.WriteHeader(404)
+		w.Write([]byte(`{"status":"Invalid login session."}`))
+		return
+	}
+
+	w.WriteHeader(200)
+	w.Write([]byte(`{"status":"Success"}`))
+}
+
