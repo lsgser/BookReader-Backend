@@ -98,8 +98,14 @@ func AddSchool(w http.ResponseWriter, req *http.Request,_ httprouter.Params){
 			defer file.Close()
 		}
 
+		if req.FormValue("school") == ""{
+			w.WriteHeader(400)
+			w.Write([]byte(`{"status":"Institution name not included"}`))
+			return
+		}
+		
 		school.School = req.FormValue("school")
-		school.SchoolIcon,err = UP.SingleFileUpload(file,handler,"/data/images/institutions/","school")
+		school.SchoolIcon,err = UP.ImageFileUpload(file,handler,"/data/images/institutions/","school")
 
 		if err != nil{
 			w.WriteHeader(400)

@@ -17,6 +17,7 @@ type Book struct{
 	Book string `json:"book"`
 	CreatedAt string `json:"created_at,omitempty"`
 	UpdatedAt string `json:"updated_at,omitempty"`
+	Token string `json:"token,omitempty"`
 }
 
 /*
@@ -136,4 +137,27 @@ func GetBooksByQuery(query string) ([]Book,error){
 	}
 
 	return books,nil
+}
+
+func (b *Book) SaveBook() error{
+	db,err := CO.GetDB()
+
+	if err != nil{
+		err = errors.New("DB connection error")
+		return err
+	}
+
+	stmt,err := db.Prepare("INSERT INTO books (title,author,publish_date,isbn,cover_page,description,book) VALUES (?,?,?,?,?,?,?)")
+
+	if err != nil{
+		return err
+	}
+
+	_,err = stmt.Exec(b.Title,strings.Title(strings.ToLower(b.Author)),b.PublishDate,b.ISBN,b.CoverPage,b.Description,b.Book)
+
+	if err != nil{
+		return err
+	}
+
+	return err
 }

@@ -122,13 +122,14 @@ CREATE TABLE `books` (
 	`author` varchar(255) NOT NULL,
 	`publish_date` year NULL DEFAULT NULL,
 	`isbn` varchar(20) NOT NULL UNIQUE,
-	`cover_page` varchar(255) NULL DEFAULT NULL,
+	`cover_page` varchar(255) NOT NULL UNIQUE,
 	`description` text,
 	`book` varchar(255) NOT NULL UNIQUE,
 	`created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `books_isbn_unique` (`isbn`),
+	UNIQUE KEY `books_cover_page_unique` (`cover_page`),
 	UNIQUE KEY `books_book_unique` (`book`)	 	
 ) ENGINE=InnoDB;
 
