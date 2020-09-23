@@ -21,6 +21,7 @@ func NewRouter() *httprouter.Router {
 	router.GET("/faculties/:s", F.ShowFaculties)
 	router.GET("/faculty/:f", F.ShowFaculty)
 	router.POST("/new_faculty",F.AddFaculty)
+
 	//Courses
 	router.GET("/courses_f/:f",C.ShowCoursesByFaculty)
 	router.GET("/courses_s/:s",C.ShowCoursesBySchool)
@@ -42,6 +43,10 @@ func NewRouter() *httprouter.Router {
 	
 	//Users
 	router.GET("/user/:s",U.ShowUser)
+	router.POST("/user_login",U.LoginUser)
+	router.GET("/user_logged/:t",U.UserLogged)
+	router.POST("/new_user",U.AddUser)
+	router.DELETE("/user_logout/:t",U.UserSignOut)
 
 	//Enrolled
 	router.GET("/enrolled_by_user/:u",E.ShowEnrolledByUser)

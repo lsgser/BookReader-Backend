@@ -4,6 +4,7 @@ import(
 	CO "../config"
 	"strings"
 	"errors"
+	A "../auth"
 )
 
 type User struct{
@@ -16,13 +17,23 @@ type User struct{
 	Surname string `json:"surname"`
 	Email string `json:"email"`
 	Picture string `json:"picture"`
-	Password string `json:"-"`
+	Password string `json:"password,omitempty"`
 	CreatedAt string `json:"created_at,omitempty"`
 	UpdatedAt string `json:"updated_at,omitempty"`
+	Token string `json:"token,omitempty"`
+}
+
+type LogInUser struct{
+	UserText string `json:"user"`
+	Password string `json:"password"`
 }
 
 func NewUser() *User{
 	return new(User)
+}
+
+func NewLogInUser() *LogInUser{
+	return new(LogInUser)
 }
 
 func GetUser(student string) (User,error){
@@ -116,4 +127,65 @@ func GetUsersByQuery(query string) ([]User,error){
 		CODE will be added here
 	*/
 	return users,nil
+}
+
+/*
+	Saves a new user to the database
+*/
+func (u *User) SaveUser() error{
+	db,err := CO.GetDB()
+
+	if err != nil{
+		err = errors.New("DB connection error")
+		return err
+	}
+
+	hashedPass,err := CO.HashPassword(u.Password)
+
+	if err != nil {
+		return err
+	}
+
+	stmt,err := db.Prepare("INSERT INTO users (school_id,faculty_id,course_id,student_nr,name,surname,email,picture,password) VALUES (?,?,?,?,?,?,?,?,?)")
+
+	if err != nil{
+		return err
+	}
+
+	_,err = stmt.Exec(u.School,u.Faculty,u.Course,u.Student,u.Name,u.Surname,u.Email,u.Picture,hashedPass)
+
+	return err
+}
+
+/*
+	Uses AuthAdmin to login 
+	an administrator and then
+	allocates a token along with the 
+	admins email
+*/
+func (u *LogInUser) UserLogin() (string,error){
+	token,err := A.AuthUser(u.UserText,u.Password)
+
+	if err != nil {
+		return "",err 
+	}
+	
+	return token,err
+}
+/*
+	Check if the user is logged in
+*/
+func UserIsLoggedIn(token string) bool{
+	isLogged := A.CheckUser(token)
+
+	return isLogged
+}
+
+/*
+	Logs out the user
+*/
+func UserLogout(token string) error{
+	err := A.DeleteUserAuth(token)
+
+	return err
 }
