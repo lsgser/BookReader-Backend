@@ -4,6 +4,7 @@ import(
 	"errors"
 	CO "../config"
 	"strings"
+	//"log"
 )
 
 /*
@@ -25,6 +26,10 @@ type EditForm struct{
 	Token string `json:"token,omitempty"`
 }
 
+var (
+	/*Route for displaying images via the api*/
+	imagePath = "/institution/"
+)
 //NewSchool returns a pointer to a School struct
 func NewSchool() *School{
 	return new(School)
@@ -55,6 +60,7 @@ func GetSchools() ([]School,error){
 	for rows.Next(){
 		s := School{}
 		rows.Scan(&s.School,&s.SchoolIcon)
+		s.SchoolIcon = imagePath+strings.Split(s.SchoolIcon,"/")[4]
 		schools = append(schools,s)
 	}
 
@@ -82,7 +88,7 @@ func GetSchool(school string) (School,error){
 	if err != nil{
 		return s,err
 	}
-
+	s.SchoolIcon = imagePath+strings.Split(s.SchoolIcon,"/")[4]
 	return s,nil
 }
 

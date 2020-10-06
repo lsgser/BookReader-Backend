@@ -114,7 +114,7 @@ func LoginUser(w http.ResponseWriter,req *http.Request,_ httprouter.Params){
 	}
 
 	w.WriteHeader(200)
-	w.Write([]byte(`{"status":"Success","token":`+token+`}`))	
+	w.Write([]byte(`{"status":"Success","token":"`+token+`"}`))	
 }
 
 /*

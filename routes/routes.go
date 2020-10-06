@@ -10,6 +10,7 @@ import (
 	S "../schools"
 	R "../required"
 	A "../admins"
+	"net/http"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -70,5 +71,8 @@ func NewRouter() *httprouter.Router {
 	router.GET("/admin_logged/:t",A.AdminLogged)
 	router.DELETE("/admin_logout/:t",A.AdminSignOut)
 	
+	/*serve institution images*/
+	router.ServeFiles("/institution/*filepath",http.Dir("data/images/institutions/"))
+	router.ServeFiles("/cover_page/*filepath",http.Dir("data/images/book_covers/"))
 	return router
 }

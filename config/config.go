@@ -54,6 +54,15 @@ func AddSafeHeaders(w *http.ResponseWriter){
 	(*w).Header().Set("Content-Type","application/json")
 	(*w).Header().Set("Access-Control-Allow-Origin","*")
 	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, PUT, PATCH, DELETE, OPTIONS")
+	(*w).Header().Set("Access-Control-Allow-Headers","Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token,Authorization")
+
+	//fmt.Println(*w)
+}
+func AddHeaders(w *http.ResponseWriter){
+	//(*w).Header().Set("Content-Type","application/json")
+	(*w).Header().Set("Access-Control-Allow-Origin","*")
+	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, PUT, PATCH, DELETE, OPTIONS")
+	(*w).Header().Set("Access-Control-Allow-Headers","Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token,Authorization")
 }
 
 func AddHeadersNoJson(w *http.ResponseWriter){
