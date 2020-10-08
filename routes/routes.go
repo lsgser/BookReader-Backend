@@ -75,5 +75,8 @@ func NewRouter() *httprouter.Router {
 	/*serve institution images*/
 	router.ServeFiles("/institution/*filepath",http.Dir("data/images/institutions/"))
 	router.ServeFiles("/cover_page/*filepath",http.Dir("data/images/book_covers/"))
+
+	/*PDF book file*/
+	router.ServeFiles("/b/*filepath",http.Dir("data/books/"))
 	return router
 }

@@ -90,7 +90,7 @@ func AddBook(w http.ResponseWriter,req *http.Request, _ httprouter.Params){
 	req.Body = http.MaxBytesReader(w,req.Body,80 * UP.GetMB())
 
 	if A.CheckAdmin(req.FormValue("token")){
-		if req.FormValue("title") != "" && req.FormValue("author") != "" && req.FormValue("isbn") != "" && req.FormValue("publish_date") != "" && req.FormValue("description") != "" {
+		if req.FormValue("title") != "" && req.FormValue("author") != "" && req.FormValue("isbn") != "" && req.FormValue("publish_date") != "" {
 			bookFile,bookHandler,err := req.FormFile("book")
 
 			if err != nil{

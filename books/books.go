@@ -23,6 +23,7 @@ type Book struct{
 var (
 	/*Route for displaying images via the api*/
 	imagePath = "/cover_page/"
+	bookPath = "/b/"
 )
 
 /*
@@ -71,6 +72,7 @@ func GetBook(isbn string) (Book,error){
 	}
 
 	book.CoverPage = imagePath+strings.Split(book.CoverPage,"/")[4]
+	book.Book = bookPath+strings.Split(book.Book,"/")[3]
 
 	return book,nil
 }
@@ -102,6 +104,7 @@ func GetBooks() ([]Book,error){
 		book := Book{}
 		rows.Scan(&book.ID,&book.Title,&book.Author,&book.PublishDate,&book.ISBN,&book.CoverPage,&book.Description,&book.Book,&book.CreatedAt,&book.UpdatedAt)
 		book.CoverPage = imagePath+strings.Split(book.CoverPage,"/")[4]
+		book.Book = bookPath+strings.Split(book.Book,"/")[3]
 		books = append(books,book)
 	}
 
@@ -142,6 +145,7 @@ func GetBooksByQuery(query string) ([]Book,error){
 		book := Book{}
 		rows.Scan(&book.ID,&book.Title,&book.Author,&book.PublishDate,&book.ISBN,&book.CoverPage,&book.Description,&book.Book,&book.CreatedAt,&book.UpdatedAt)
 		book.CoverPage = imagePath+strings.Split(book.CoverPage,"/")[4]
+		book.Book = bookPath+strings.Split(book.Book,"/")[3]
 		books = append(books,book)
 	}
 
@@ -157,12 +161,13 @@ func (b *Book) SaveBook() error{
 	}
 
 	stmt,err := db.Prepare("INSERT INTO books (title,author,publish_date,isbn,cover_page,description,book) VALUES (?,?,?,?,?,?,?)")
-
+	
 	if err != nil{
 		return err
 	}
 
 	_,err = stmt.Exec(b.Title,strings.Title(strings.ToLower(b.Author)),b.PublishDate,b.ISBN,b.CoverPage,b.Description,b.Book)
+	
 
 	if err != nil{
 		return err
