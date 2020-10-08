@@ -11,7 +11,7 @@ import(
 	School struct
 */
 type School struct{
-	ID int64 `json:"-"`
+	ID int64 `json:"id,omitempty"`
 	School string `json:"school"`
 	SchoolIcon string `json:"school_icon"`
 	CreatedAt string `json:"created_at,omitempty"`
@@ -76,14 +76,14 @@ func GetSchool(school string) (School,error){
 		return s,err
 	}
 
-	stmt,err := db.Prepare("SELECT school,school_icon FROM schools WHERE school=?")
+	stmt,err := db.Prepare("SELECT id,school,school_icon FROM schools WHERE school=?")
 
 	if err != nil{
 		return s,err
 	}
 
 	defer stmt.Close()
-	err = stmt.QueryRow(school).Scan(&s.School,&s.SchoolIcon)
+	err = stmt.QueryRow(school).Scan(&s.ID,&s.School,&s.SchoolIcon)
 
 	if err != nil{
 		return s,err

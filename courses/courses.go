@@ -4,6 +4,7 @@ import(
 	"errors"
 	CO "../config"
 	"strings"
+	//"log"
 )
 
 type Course struct{
@@ -39,7 +40,7 @@ func GetCoursesBySchool(school int64)([]Course,error){
 		return courses,err
 	}
 
-	rows,err := db.Query("SELECT * FROM courses WHERE school_id =?",school)
+	rows,err := db.Query("SELECT id,school_id,faculty_id,course FROM courses WHERE school_id =?",school)
 
 	if err != nil{
 		return courses,err
@@ -73,7 +74,7 @@ func GetCoursesByFaculty(faculty int64)([]Course,error){
 		return courses,err
 	}
 
-	rows,err := db.Query("SELECT * FROM courses WHERE faculty_id =?",faculty)
+	rows,err := db.Query("SELECT id,school_id,faculty_id,course FROM courses WHERE faculty_id =?",faculty)
 
 	if err != nil{
 		return courses,err
@@ -105,7 +106,7 @@ func GetCourse(c int64) (Course,error){
 		return course,err
 	} 
 
-	stmt,err := db.Prepare("SELECT * FROM courses WHERE id=?")
+	stmt,err := db.Prepare("SELECT id,school_id,faculty_id,course FROM courses WHERE id=?")
 
 	if err != nil{
 		return course,err

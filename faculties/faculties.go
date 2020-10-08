@@ -3,7 +3,7 @@ package faculties
 //Uncomment errors,and strings if you end up using them in the code below
 import (
 	"errors"
-	"log"
+	//"log"
 	CO "../config"
 	"strings"
 )
@@ -56,7 +56,7 @@ func GetFaculties(s int64) ([]Faculty, error) {
 		rows.Scan(&faculty.ID, &faculty.School, &faculty.Faculty, &faculty.CreatedAt, &faculty.UpdatedAt)
 		faculties = append(faculties, faculty)
 	}
-	log.Println("Faculties :", faculties)
+	//log.Println("Faculties :", faculties)
 	return faculties, nil
 }
 

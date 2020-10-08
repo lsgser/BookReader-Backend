@@ -4,6 +4,7 @@ import (
 	CO "../config"
 	"strings"
 	"errors"
+	//"log"
 )
 
 //Module Struct
@@ -104,6 +105,33 @@ func GetModulesByCourse(course int64) ([]Module, error) {
 	}
 
 	rows, err := database.Query("SELECT * FROM modules WHERE course_id =?", course)
+
+	if err != nil {
+		return modules, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		module := Module{}
+		rows.Scan(&module.ID, &module.School, &module.Faculty, &module.Course, &module.Module, &module.CreatedAt, &module.UpdatedAt)
+		modules = append(modules, module)
+	}
+
+	return modules, nil
+}
+
+func GetCourseModuleByName(course int64,moduleName string) ([]Module,error){
+	modules := make([]Module, 0)
+
+	database, err := CO.GetDB()
+
+	if err != nil {
+		return modules, err
+	}
+	
+	moduleName = "%"+moduleName+"%"
+
+	rows, err := database.Query("SELECT * FROM modules WHERE course_id =? AND module LIKE ?", course,moduleName)
 
 	if err != nil {
 		return modules, err

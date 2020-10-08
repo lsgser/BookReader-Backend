@@ -33,6 +33,7 @@ func NewRouter() *httprouter.Router {
 	router.GET("/modules_f/:f",M.ShowModulesByFaculty)
 	router.GET("/modules_s/:s",M.ShowModulesBySchool)
 	router.GET("/modules_c/:c",M.ShowModulesByCourse)
+	router.GET("/module_n/:c/:m",M.ShowFacultyModuleByName)
 	router.GET("/module/:m",M.ShowModule)
 	router.POST("/new_module",M.AddModule)
 

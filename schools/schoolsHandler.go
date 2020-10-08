@@ -7,6 +7,7 @@ import(
 	CO "../config"
 	UP "../uploads"
 	A "../auth"
+	//"net/url"
 )
 
 /*
@@ -44,7 +45,13 @@ func ShowSchool(w http.ResponseWriter , req *http.Request , params httprouter.Pa
 		w.Write([]byte(`{"status":"Institution was not provided"}`))
 		return
 	}
-	
+	//schoolName,err := url.QueryUnescape(schoolName)
+	/*if err != nil {
+		w.WriteHeader(400)
+		w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+		return
+	}
+	*/
 	school,err := GetSchool(schoolName)
 
 	if err != nil{

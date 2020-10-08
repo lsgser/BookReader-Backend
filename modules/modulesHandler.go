@@ -117,6 +117,43 @@ func ShowModulesByCourse(w http.ResponseWriter,req *http.Request,params httprout
 	}
 }
 
+func ShowFacultyModuleByName(w http.ResponseWriter,req *http.Request,params httprouter.Params){
+	CO.AddSafeHeaders(&w)
+
+	course := params.ByName("c")
+	moduleName := params.ByName("m")
+
+	if course == "" || moduleName == ""{
+		w.WriteHeader(400)
+		w.Write([]byte(`{"status":"Course was not provided"}`))
+		return
+	}
+
+	c,err := strconv.ParseInt(course,10,64)
+
+	if err != nil{
+		w.WriteHeader(400)
+		w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+		return
+	}
+
+	modules,err := GetCourseModuleByName(c,moduleName)
+	
+	if err != nil{
+		w.WriteHeader(500)
+		w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(modules)
+
+	if err != nil{
+		w.WriteHeader(500)
+		w.Write([]byte(`{"status":"Something went wrong"}`))
+		return
+	}	
+}
+
 func ShowModule(w http.ResponseWriter,req *http.Request,params httprouter.Params){
 	CO.AddSafeHeaders(&w)
 
