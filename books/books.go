@@ -20,6 +20,11 @@ type Book struct{
 	Token string `json:"token,omitempty"`
 }
 
+var (
+	/*Route for displaying images via the api*/
+	imagePath = "/cover_page/"
+)
+
 /*
 	NewBook() function returns a Book pointer struct
 */
@@ -65,6 +70,8 @@ func GetBook(isbn string) (Book,error){
 		return book,err
 	}
 
+	book.CoverPage = imagePath+strings.Split(book.CoverPage,"/")[4]
+
 	return book,nil
 }
 
@@ -94,6 +101,7 @@ func GetBooks() ([]Book,error){
 	for rows.Next(){
 		book := Book{}
 		rows.Scan(&book.ID,&book.Title,&book.Author,&book.PublishDate,&book.ISBN,&book.CoverPage,&book.Description,&book.Book,&book.CreatedAt,&book.UpdatedAt)
+		book.CoverPage = imagePath+strings.Split(book.CoverPage,"/")[4]
 		books = append(books,book)
 	}
 
@@ -133,6 +141,7 @@ func GetBooksByQuery(query string) ([]Book,error){
 	for rows.Next(){
 		book := Book{}
 		rows.Scan(&book.ID,&book.Title,&book.Author,&book.PublishDate,&book.ISBN,&book.CoverPage,&book.Description,&book.Book,&book.CreatedAt,&book.UpdatedAt)
+		book.CoverPage = imagePath+strings.Split(book.CoverPage,"/")[4]
 		books = append(books,book)
 	}
 
