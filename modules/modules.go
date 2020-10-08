@@ -5,6 +5,7 @@ import (
 	"strings"
 	"errors"
 	//"log"
+	"database/sql"
 )
 
 //Module Struct
@@ -202,6 +203,29 @@ func (m *Module) SaveModule() error{
 
 	if err != nil{
 		err = errors.New("Institution / Faculty / Course does not exist")
+		return err
+	}
+
+	/*
+		Check if the module being added exists for the specific course
+	*/
+	var school_module string
+	moduleQuery,err := db.Prepare("SELECT module FROM modules WHERE school_id = ? AND module = ?")
+	
+	if err != nil{
+		return err
+	}
+
+	defer moduleQuery.Close()
+
+	err = moduleQuery.QueryRow(m.School,m.Module).Scan(&school_module)
+
+	if err == sql.ErrNoRows{
+		//Do nothing
+	}else if err != nil{
+		return err
+	}else{
+		err = errors.New("This module already exists for the selected institution")
 		return err
 	}
 
