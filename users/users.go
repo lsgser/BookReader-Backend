@@ -23,6 +23,9 @@ type User struct{
 	Token string `json:"token,omitempty"`
 }
 
+var (
+	imagePath = "/user_pic/"
+)
 type LogInUser struct{
 	UserText string `json:"user"`
 	Password string `json:"password"`
@@ -53,7 +56,7 @@ func GetUser(student string) (User,error){
 		return user,err
 	}
 
-	stmt,err := db.Prepare("SELECT * FROM users WHERE student_nr = ?")
+	stmt,err := db.Prepare("SELECT school_id,faculty_id,course_id,student_nr,name,surname,email,picture FROM users WHERE student_nr = ?")
 
 	if err != nil{
 		return user,err
@@ -61,7 +64,7 @@ func GetUser(student string) (User,error){
 
 	defer stmt.Close()
 
-	err = stmt.QueryRow(student).Scan(&user.ID,&user.School,&user.Faculty,&user.Course,&user.Student,&user.Name,&user.Surname,&user.Email,&user.Picture,&user.Password,&user.CreatedAt,&user.UpdatedAt)
+	err = stmt.QueryRow(student).Scan(&user.School,&user.Faculty,&user.Course,&user.Student,&user.Name,&user.Surname,&user.Email,&user.Picture)
 
 	if err != nil{
 		return user,err
@@ -82,6 +85,28 @@ func GetUsers() ([]User,error){
 	/*
 		CODE will be added here
 	*/
+	db,err := CO.GetDB()
+
+	if err != nil{
+		err = errors.New("DB connection error")
+		return users,err
+	}
+
+	rows,err := db.Query("SELECT school_id,faculty_id,course_id,student_nr,name,surname,email,picture FROM users")
+
+	if err != nil{
+		return users,err
+	}
+
+	defer rows.Close()
+
+	for rows.Next(){
+		user := User{}
+		rows.Scan(&user.School,&user.Faculty,&user.Course,&user.Student,&user.Name,&user.Surname,&user.Email,&user.Picture)
+		user.Picture = imagePath+strings.Split(user.Picture,"/")[4]
+		users = append(users,user)
+	}
+
 	return users,nil
 }	
 
@@ -93,6 +118,28 @@ func GetUsersBySchool(school int64) ([]User,error){
 	/*
 		CODE will be added here
 	*/
+	db,err := CO.GetDB()
+
+	if err != nil{
+		err = errors.New("DB connection error")
+		return users,err
+	}
+
+	rows,err := db.Query("SELECT school_id,faculty_id,course_id,student_nr,name,surname,email,picture FROM users where school_id = ?",school)
+
+	if err != nil{
+		return users,err
+	}
+
+	defer rows.Close()
+
+	for rows.Next(){
+		user := User{}
+		rows.Scan(&user.School,&user.Faculty,&user.Course,&user.Student,&user.Name,&user.Surname,&user.Email,&user.Picture)
+		user.Picture = imagePath+strings.Split(user.Picture,"/")[4]
+		users = append(users,user)
+	}
+
 	return users,nil
 }
 
@@ -104,6 +151,28 @@ func GetUsersByFaculty(faculty int64) ([]User,error){
 	/*
 		CODE will be added here
 	*/
+	db,err := CO.GetDB()
+
+	if err != nil{
+		err = errors.New("DB connection error")
+		return users,err
+	}
+
+	rows,err := db.Query("SELECT school_id,faculty_id,course_id,student_nr,name,surname,email,picture FROM users WHERE faculty_id=?",faculty)
+
+	if err != nil{
+		return users,err
+	}
+
+	defer rows.Close()
+
+	for rows.Next(){
+		user := User{}
+		rows.Scan(&user.School,&user.Faculty,&user.Course,&user.Student,&user.Name,&user.Surname,&user.Email,&user.Picture)
+		user.Picture = imagePath+strings.Split(user.Picture,"/")[4]
+		users = append(users,user)
+	}
+
 	return users,nil
 }
 
@@ -115,6 +184,28 @@ func GetUsersByCourse(course int64) ([]User,error){
 	/*
 		CODE will be added here
 	*/
+	db,err := CO.GetDB()
+
+	if err != nil{
+		err = errors.New("DB connection error")
+		return users,err
+	}
+
+	rows,err := db.Query("SELECT school_id,faculty_id,course_id,student_nr,name,surname,email,picture FROM users WHERE course_id = ?",course)
+
+	if err != nil{
+		return users,err
+	}
+
+	defer rows.Close()
+
+	for rows.Next(){
+		user := User{}
+		rows.Scan(&user.School,&user.Faculty,&user.Course,&user.Student,&user.Name,&user.Surname,&user.Email,&user.Picture)
+		user.Picture = imagePath+strings.Split(user.Picture,"/")[4]
+		users = append(users,user)
+	}
+	
 	return users,nil
 }
 
@@ -126,6 +217,30 @@ func GetUsersByQuery(query string) ([]User,error){
 	/*
 		CODE will be added here
 	*/
+	db,err := CO.GetDB()
+
+	if err != nil{
+		err = errors.New("DB connection error")
+		return users,err
+	}
+
+	query = "%"+query+"%"
+
+	rows,err := db.Query("SELECT school_id,faculty_id,course_id,student_nr,name,surname,email,picture FROM users WHERE student_nr LIKE ? OR name LIKE ? OR surname LIKE ?",query,query,query)
+
+	if err != nil{
+		return users,err
+	}
+
+	defer rows.Close()
+
+	for rows.Next(){
+		user := User{}
+		rows.Scan(&user.School,&user.Faculty,&user.Course,&user.Student,&user.Name,&user.Surname,&user.Email,&user.Picture)
+		user.Picture = imagePath+strings.Split(user.Picture,"/")[4]
+		users = append(users,user)
+	}
+
 	return users,nil
 }
 

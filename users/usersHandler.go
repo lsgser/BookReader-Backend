@@ -9,6 +9,7 @@ import(
 	//UP "../uploads"
 	"github.com/badoux/checkmail"
 	"strings"
+	"strconv"
 )
 
 //Handler responsible for displaying a single user based on their student id
@@ -31,6 +32,130 @@ func ShowUser(w http.ResponseWriter , req *http.Request , params httprouter.Para
 		w.Write([]byte(`{"status":"Something went wrong"}`))
 		return
 	}
+}
+
+func ShowUsers(w http.ResponseWriter , req *http.Request , _ httprouter.Params){
+	CO.AddSafeHeaders(&w)
+	users,err := GetUsers()
+
+	if err != nil{
+		w.WriteHeader(500)
+		w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(users)
+
+	if err != nil{
+		w.WriteHeader(500)
+		w.Write([]byte(`{"status":"Something went wrong"}`))
+		return
+	}
+}
+
+func ShowUsersBySchool(w http.ResponseWriter , req *http.Request , params httprouter.Params){
+	CO.AddSafeHeaders(&w)
+	school := params.ByName("s")
+
+	if school == ""{
+		w.WriteHeader(400)
+		w.Write([]byte(`{"status":"School was not provided"}`))
+		return
+	}
+
+	s,err := strconv.ParseInt(school,10,64)
+	
+	if err != nil{
+		w.WriteHeader(400)
+		w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+		return
+	}
+
+	users,err := GetUsersBySchool(s)
+
+	if err != nil{
+		w.WriteHeader(500)
+		w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(users)
+
+	if err != nil{
+		w.WriteHeader(500)
+		w.Write([]byte(`{"status":"Something went wrong"}`))
+		return
+	}	
+}
+
+func ShowUsersByFaculty(w http.ResponseWriter , req *http.Request , params httprouter.Params){
+	CO.AddSafeHeaders(&w)
+	faculty := params.ByName("f")
+
+	if faculty == ""{
+		w.WriteHeader(400)
+		w.Write([]byte(`{"status":"Faculty was not provided"}`))
+		return
+	}
+
+	f,err := strconv.ParseInt(faculty,10,64)
+	
+	if err != nil{
+		w.WriteHeader(400)
+		w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+		return
+	}
+
+	users,err := GetUsersByFaculty(f)
+
+	if err != nil{
+		w.WriteHeader(500)
+		w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(users)
+
+	if err != nil{
+		w.WriteHeader(500)
+		w.Write([]byte(`{"status":"Something went wrong"}`))
+		return
+	}	
+}
+
+func ShowUsersByCourse(w http.ResponseWriter , req *http.Request , params httprouter.Params){
+	CO.AddSafeHeaders(&w)
+	course := params.ByName("c")
+
+	if course == ""{
+		w.WriteHeader(400)
+		w.Write([]byte(`{"status":"Course was not provided"}`))
+		return
+	}
+
+	c,err := strconv.ParseInt(course,10,64)
+	
+	if err != nil{
+		w.WriteHeader(400)
+		w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+		return
+	}
+
+	users,err := GetUsersByCourse(c)
+
+	if err != nil{
+		w.WriteHeader(500)
+		w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(users)
+
+	if err != nil{
+		w.WriteHeader(500)
+		w.Write([]byte(`{"status":"Something went wrong"}`))
+		return
+	}	
 }
 
 /*

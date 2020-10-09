@@ -14,6 +14,14 @@ type Required struct{
 	UpdatedAt string `json:"updated_at,omitempty"`
 }
 
+type SaveRequired struct{
+	ID int64 `json:"-"`
+	ISBN string `json:"isbn"`
+	Module int64 `json:"module"`
+	User string `json:"user"`
+	Token string `json:"token,omitempty"`
+}
+
 func NewRequired() *Required{
 	return new(Required)
 }
@@ -124,4 +132,16 @@ func GetRequiredByBook(isbn string) ([]Required,error){
 	}
 
 	return required,nil
+}
+
+func (r *SaveRequired) SaveRequired() error{
+	/*
+	db,err := CO.GetDB()
+
+	if err != nil{
+		err = errors.New("Database connection error")
+		return err
+	}
+	*/
+	return nil
 }

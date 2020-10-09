@@ -183,3 +183,18 @@ CREATE TABLE `admin_login_tokens` (
 	KEY `admin_login_tokens_user_id_foreign` (`user_id`),
 	CONSTRAINT `admin_login_tokens_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `admins` (`id`) ON DELETE CASCADE			
 ) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS `recommended`;
+
+CREATE TABLE `recommended` (
+	`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+	`book_id` bigint(20) unsigned NOT NULL,
+	`module_id` bigint(20) unsigned NOT NULL,
+	`created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	PRIMARY KEY (`id`),
+	KEY `recommended_book_id_foreign` (`book_id`),
+	KEY `recommended_module_id_foreign` (`module_id`),
+	CONSTRAINT `recommended_book_id_foreign` FOREIGN KEY (`book_id`) REFERENCES `books` (`id`) ON DELETE CASCADE,
+	CONSTRAINT `recommended_module_id_foreign` FOREIGN KEY (`module_id`) REFERENCES `modules` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;

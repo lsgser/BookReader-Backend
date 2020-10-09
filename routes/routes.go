@@ -45,6 +45,10 @@ func NewRouter() *httprouter.Router {
 	
 	//Users
 	router.GET("/user/:s",U.ShowUser)
+	router.GET("/users",U.ShowUsers)
+	router.GET("/user_s/:s",U.ShowUsersBySchool)
+	router.GET("/user_f/:f",U.ShowUsersByFaculty)
+	router.GET("/user_c/:c",U.ShowUsersByCourse)
 	router.POST("/user_login",U.LoginUser)
 	router.GET("/user_logged/:t",U.UserLogged)
 	router.POST("/new_user",U.AddUser)
@@ -74,6 +78,7 @@ func NewRouter() *httprouter.Router {
 	
 	/*serve institution images*/
 	router.ServeFiles("/institution/*filepath",http.Dir("data/images/institutions/"))
+	router.ServeFiles("/user_pic/*filepath",http.Dir("data/images/users/"))
 	router.ServeFiles("/cover_page/*filepath",http.Dir("data/images/book_covers/"))
 
 	/*PDF book file*/
