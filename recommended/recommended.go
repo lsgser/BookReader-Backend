@@ -20,6 +20,7 @@ type SaveRecommended struct{
 	Module int64 `json:"module"`
 	CreatedAt string `json:"created_at,omitempty"`
 	UpdatedAt string `json:"updated_at,omitempty"`
+	Token string `json:"token,omitempty"`
 }
 
 type RecommendedISBN struct{
@@ -42,8 +43,8 @@ func NewRecommendedISBN() *RecommendedISBN{
 	return new(RecommendedISBN)
 }
 
-func GetRecommendedByBook(isbn string) ([]NewRecommendedISBN,error){
-	recommended := make([]NewRecommendedISBN,0)
+func GetRecommendedByBook(isbn string) ([]RecommendedISBN,error){
+	recommended := make([]RecommendedISBN,0)
 	db,err := CO.GetDB()
 
 	if err != nil{
@@ -85,14 +86,14 @@ func GetRecommendedByBook(isbn string) ([]NewRecommendedISBN,error){
 	return recommended,err
 }
 
-func GetRecommendedByModule(module int64) (NewRecommendedISBN,error){
-	recommend := NewRecommendedISBN{}
+func GetRecommendedByModule(module int64) (RecommendedISBN,error){
+	recommend := RecommendedISBN{}
 
 	db,err := CO.GetDB()
 
 	if err != nil{
 		err = errors.New("DB connection error")
-		return recommended,err
+		return recommend,err
 	}
 
 	var (
@@ -102,7 +103,7 @@ func GetRecommendedByModule(module int64) (NewRecommendedISBN,error){
 	m, err := db.Prepare("SELECT id FROM modules WHERE id=?")
 
 	if err != nil {
-		return recommended, err
+		return recommend, err
 	}
 
 	defer m.Close()
@@ -140,8 +141,8 @@ func GetRecommendedByModule(module int64) (NewRecommendedISBN,error){
 	return recommend,err
 }
 
-func GetRecommendedByModuleAndBook(isbn string,module int64) (NewRecommendedISBN,error){
-	recommend := NewRecommendedISBN{}
+func GetRecommendedByModuleAndBook(isbn string,module int64) (RecommendedISBN,error){
+	recommend := RecommendedISBN{}
 	db,err := CO.GetDB()
 
 	if err != nil{

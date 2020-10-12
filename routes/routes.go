@@ -10,6 +10,7 @@ import (
 	S "../schools"
 	R "../required"
 	A "../admins"
+	RE "../recommended"
 	"net/http"
 	"github.com/julienschmidt/httprouter"
 )
@@ -77,6 +78,12 @@ func NewRouter() *httprouter.Router {
 	router.GET("/admin_logged/:t",A.AdminLogged)
 	router.DELETE("/admin_logout/:t",A.AdminSignOut)
 	
+	//Recommended
+	router.GET("/recommended_by_book/:isbn",RE.ShowRecommendedByBook)
+	router.GET("/recommended_by_module/:m",RE.ShowRecommendedByModule)
+	router.GET("/recommended_by_m_and_b/:m/:isbn",RE.ShowRecommendedByModuleAndBook)
+	router.POST("/new_recommend",RE.AddRecommended)
+
 	/*serve institution images*/
 	router.ServeFiles("/institution/*filepath",http.Dir("data/images/institutions/"))
 	router.ServeFiles("/user_pic/*filepath",http.Dir("data/images/users/"))
