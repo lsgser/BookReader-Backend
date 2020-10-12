@@ -6,6 +6,7 @@ import(
 	"strconv"
 	CO "../config"
 	"github.com/julienschmidt/httprouter"
+	A "../auth"
 )
 
 func ShowRequiredByUser(w http.ResponseWriter , req *http.Request , params httprouter.Params){
@@ -89,4 +90,41 @@ func ShowRequiredByBook(w http.ResponseWriter , req *http.Request , params httpr
 		w.Write([]byte(`{"status":"`+err.Error()+`"}`))
 		return
 	}
+}
+
+func AddRequired(w http.ResponseWriter , req *http.Request , _ httprouter.Params){
+	CO.AddSafeHeaders(&w)
+	sRequired := NewSaveRequired()
+	body := req.Body
+	defer body.Close()
+	err := json.NewDecoder(body).Decode(sRequired)
+
+	if err != nil{
+		w.WriteHeader(400)
+		w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+		return
+	}
+
+	if A.CheckAdmin(sRequired.Token){
+		if sRequired.User == "" || sRequired.Module == 0 || sRequired.ISBN == ""{
+			w.WriteHeader(400)
+			w.Write([]byte(`{"status":"Fill in all the required data."}`))
+			return		
+		}
+
+		err = sRequired.SaveRequired()
+
+		if err != nil{
+			w.WriteHeader(400)
+			w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+			return		
+		}
+	}else{
+		w.WriteHeader(404)
+		w.Write([]byte(`{"status":"Invalid login session."}`))
+		return
+	}
+
+	w.WriteHeader(200)
+	w.Write([]byte(`{"status":"Success"}`))	
 }

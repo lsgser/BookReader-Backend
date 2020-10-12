@@ -26,6 +26,10 @@ func NewRequired() *Required{
 	return new(Required)
 }
 
+func NewSaveRequired() *SaveRequired{
+	return new(NewSaveRequired)
+}
+
 func GetRequiredByUser(user string) ([]Required,error){
 	required := make([]Required,0)
 	db,err := CO.GetDB()
@@ -135,13 +139,57 @@ func GetRequiredByBook(isbn string) ([]Required,error){
 }
 
 func (r *SaveRequired) SaveRequired() error{
-	/*
+	var (
+		book_id int64
+		user_id int64
+	)	
+
 	db,err := CO.GetDB()
 
 	if err != nil{
 		err = errors.New("Database connection error")
 		return err
 	}
-	*/
+
+	stmtBook,err := db.Prepare("SELECT id FROM books WHERE isbn = ?")
+
+	if err != nil{
+		return err
+	}
+
+	defer stmtBook.Close()
+
+	err = stmtBook.QueryRow(r.ISBN).Scan(&book_id)
+
+	if err != nil{
+		return err
+	}
+
+	stmtUser,err := db.Prepare("SELECT id FROM users WHERE student_nr = ?")
+
+	if err != nil{
+		return err
+	}
+
+	defer stmtUser.Close()
+
+	err = stmtUser.QueryRow(r.User).Scan(&user_id)
+
+	if err != nil{
+		return err
+	}
+
+	stmtRequired,err := db.Prepare("INSERT INTO required (book_id,module_id,user_id) VALUES(?,?,?)")
+
+	if err != nil{
+		return err
+	}
+
+	_,err = stmtRequired.Exec(s.School,s.SchoolIcon)
+
+	if err != nil{
+		return err
+	}
+
 	return nil
 }
