@@ -27,7 +27,7 @@ func NewRequired() *Required{
 }
 
 func NewSaveRequired() *SaveRequired{
-	return new(SaveRequired)
+	return new(NewSaveRequired)
 }
 
 func GetRequiredByUser(user string) ([]Required,error){
@@ -142,7 +142,6 @@ func (r *SaveRequired) SaveRequired() error{
 	var (
 		book_id int64
 		user_id int64
-		module_id int64
 	)	
 
 	db,err := CO.GetDB()
@@ -180,27 +179,13 @@ func (r *SaveRequired) SaveRequired() error{
 		return err
 	}
 
-	stmtModule,err := db.Prepare("SELECT id FROM modules WHERE id = ?")
-
-	if err != nil{
-		return err
-	}
-
-	defer stmtModule.Close()
-
-	err = stmtModule.QueryRow(r.Module).Scan(&module_id)
-
-	if err != nil{
-		return err
-	}
-
 	stmtRequired,err := db.Prepare("INSERT INTO required (book_id,module_id,user_id) VALUES(?,?,?)")
 
 	if err != nil{
 		return err
 	}
 
-	_,err = stmtRequired.Exec(book_id,r.Module,user_id)
+	_,err = stmtRequired.Exec(s.School,s.SchoolIcon)
 
 	if err != nil{
 		return err
