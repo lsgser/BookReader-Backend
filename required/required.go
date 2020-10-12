@@ -27,7 +27,7 @@ func NewRequired() *Required{
 }
 
 func NewSaveRequired() *SaveRequired{
-	return new(NewSaveRequired)
+	return new(SaveRequired)
 }
 
 func GetRequiredByUser(user string) ([]Required,error){
@@ -185,7 +185,7 @@ func (r *SaveRequired) SaveRequired() error{
 		return err
 	}
 
-	_,err = stmtRequired.Exec(s.School,s.SchoolIcon)
+	_,err = stmtRequired.Exec(book_id,r.Module,user_id)
 
 	if err != nil{
 		return err
