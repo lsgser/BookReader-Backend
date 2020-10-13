@@ -237,7 +237,7 @@ func GetUsersByQuery(query string) ([]User,error){
 	for rows.Next(){
 		user := User{}
 		rows.Scan(&user.School,&user.Faculty,&user.Course,&user.Student,&user.Name,&user.Surname,&user.Email,&user.Picture)
-		user.Picture = imagePath+strings.Split(user.Picture,"/")[4]
+		user.Picture = imagePath+strings.Split(user.Picture,"/")[3]
 		users = append(users,user)
 	}
 

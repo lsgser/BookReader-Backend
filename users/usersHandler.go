@@ -158,6 +158,32 @@ func ShowUsersByCourse(w http.ResponseWriter , req *http.Request , params httpro
 	}	
 }
 
+func ShowUsersByQuery(w http.ResponseWriter , req *http.Request , params httprouter.Params){
+	CO.AddSafeHeaders(&w)
+	query := params.ByName("q")
+
+	if query == ""{
+		w.WriteHeader(400)
+		w.Write([]byte(`{"status":"Query was not provided"}`))
+		return
+	}
+	
+	users,err := GetUsersByQuery(query)
+
+	if err != nil{
+		w.WriteHeader(500)
+		w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(users)
+
+	if err != nil{
+		w.WriteHeader(500)
+		w.Write([]byte(`{"status":"Something went wrong"}`))
+		return
+	}
+}
 /*
 	Add a new user
 */

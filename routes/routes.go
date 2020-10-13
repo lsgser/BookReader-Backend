@@ -50,6 +50,7 @@ func NewRouter() *httprouter.Router {
 	router.GET("/user_s/:s",U.ShowUsersBySchool)
 	router.GET("/user_f/:f",U.ShowUsersByFaculty)
 	router.GET("/user_c/:c",U.ShowUsersByCourse)
+	router.GET("/users_q/:q",U.ShowUsersByQuery)
 	router.POST("/user_login",U.LoginUser)
 	router.GET("/user_logged/:t",U.UserLogged)
 	router.POST("/new_user",U.AddUser)

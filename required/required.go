@@ -142,6 +142,8 @@ func (r *SaveRequired) SaveRequired() error{
 	var (
 		book_id int64
 		user_id int64
+		recommended_id int64
+		enrolled_id int64
 	)	
 
 	db,err := CO.GetDB()
@@ -176,6 +178,36 @@ func (r *SaveRequired) SaveRequired() error{
 	err = stmtUser.QueryRow(r.User).Scan(&user_id)
 
 	if err != nil{
+		return err
+	}
+
+	rec,err := db.Prepare("SELECT id FROM recommended WHERE module_id = ? AND book_id = ?")
+
+	if err != nil{
+		return err
+	}
+
+	defer rec.Close()
+
+	err = rec.QueryRow(r.Module,book_id).Scan(&recommended_id)
+
+	if err != nil{
+		err = errors.New("The recommended book for the module selected is invalid")
+		return err
+	}
+
+	enrolled,err := db.Prepare("SELECT id FROM enrolled WHERE module_id = ? AND user_id = ?")
+
+	if err != nil{
+		return err
+	}
+
+	defer enrolled.Close()
+
+	err = enrolled.QueryRow(r.Module,user_id).Scan(&enrolled_id)
+
+	if err != nil{
+		err = errors.New("The student is not enrolled for the selected module")
 		return err
 	}
 
