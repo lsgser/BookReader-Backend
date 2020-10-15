@@ -24,5 +24,8 @@ func GetDB() (*sql.DB,error){
 		return db,err
 	}
 	
+	db.SetMaxOpenConns(1000)
+	db.SetMaxIdleConns(300)
+	db.SetConnMaxLifetime(0)
 	return db,nil
 }
