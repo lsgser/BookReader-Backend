@@ -252,7 +252,7 @@ func (e *SaveEnrol)SaveEnrolled() error{
 			return err
 		}
 
-		_,err = insertEnrol.Exec(module_id,user_id)
+		_,err = insertEnrol.Exec(e.Module,user_id)
 
 		if err != nil{
 			return err
@@ -264,5 +264,5 @@ func (e *SaveEnrol)SaveEnrolled() error{
 		return err
 	}
 
-	return err
+	return nil
 }
