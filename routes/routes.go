@@ -61,6 +61,7 @@ func NewRouter() *httprouter.Router {
 	router.GET("/enrolled_by_module/:m",E.ShowEnrolledByModule)
 	router.GET("/enrolled_modules/:u",E.ShowEnrolledModules)
 	router.GET("/enrolled_users/:m",E.ShowEnrolledUsers)
+	router.POST("/new_enrolled",E.AddEnrolled)
 
 	//School
 	router.GET("/schools",S.ShowSchools)

@@ -6,6 +6,7 @@ import(
 	U "../users"
 	//"strings"
 	"errors"
+	"database/sql"
 )
 
 type Enrol struct{
@@ -16,8 +17,21 @@ type Enrol struct{
 	UpdatedAt string `json:"updated_at,omitempty"`
 }
 
+type SaveEnrol struct{
+	ID int64 `json:"-"`
+	Module int64 `json:"module"`
+	User string `json:"user"`
+	CreatedAt string `json:"created_at,omitempty"`
+	UpdatedAt string `json:"updated_at,omitempty"`
+	Token string `json:"token"`	
+}
+
 func NewEnrol() *Enrol{
 	return new(Enrol)
+}
+
+func NewSaveEnrol() *SaveEnrol{
+	return new(SaveEnrol)
 }
 
 func GetEnrolledByModule(module int64) ([]Enrol,error){
@@ -191,4 +205,64 @@ func GetEnrolledUsers(module int64) ([]U.User,error){
 	}
 
 	return users,nil	
+}
+
+func (e *SaveEnrol)SaveEnrolled() error{
+	db,err := CO.GetDB()
+
+	if err != nil{
+		err = errors.New("DB connection error")
+		return err
+	}
+
+
+	var (
+		user_id int64
+		module_id int64
+	)
+
+	stmtUser,err := db.Prepare("SELECT id FROM users WHERE student_nr = ?")
+
+	if err != nil{
+		return err
+	}
+
+	defer stmtUser.Close()
+
+	err = stmtUser.QueryRow(e.User).Scan(&user_id)
+
+	if err != nil{
+		return err
+	}
+
+	stmtModule,err := db.Prepare("SELECT module_id FROM enrolled WHERE module_id = ? AND user_id = ?")
+
+	if err != nil{
+		return err
+	}
+
+	defer stmtModule.Close()
+
+	err = stmtModule.QueryRow(e.Module,user_id).Scan(&module_id)
+		
+	if err == sql.ErrNoRows{
+		insertEnrol,err := db.Prepare("INSERT INTO enrolled (module_id,user_id) VALUES (?,?)")
+
+		if err != nil{
+			return err
+		}
+
+		_,err = insertEnrol.Exec(module_id,user_id)
+
+		if err != nil{
+			return err
+		}
+	}else if err != nil{
+		return err
+	}else{
+		err = errors.New("User already enrolled for the module.")
+		return err
+	}
+
+	return err
 }

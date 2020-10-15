@@ -6,6 +6,7 @@ import (
 	"strconv"
 	CO "../config"
 	"github.com/julienschmidt/httprouter"
+	A "../auth"
 )
 
 func ShowEnrolledByModule(w http.ResponseWriter, req *http.Request, params httprouter.Params){
@@ -133,4 +134,40 @@ func ShowEnrolledModules(w http.ResponseWriter, req *http.Request, params httpro
 		w.Write([]byte(`{"status":"` + err.Error() + `"}`))
 		return
 	}
+}
+
+func AddEnrolled(w http.ResponseWriter , req *http.Request , _ httprouter.Params){
+	CO.AddSafeHeaders(&w)
+	enrol := NewSaveEnrol()
+	body := req.Body
+	defer body.Close()
+	err := json.NewDecoder(body).Decode(enrol)
+
+	if err != nil{
+		w.WriteHeader(400)
+		w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+		return
+	}
+
+	if A.CheckAdmin(enrol.Token){
+		if enrol.Module != 0 && enrol.User != ""{
+			err = enrol.SaveEnrolled()
+			if err != nil{
+				w.WriteHeader(400)
+				w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+				return
+			}			
+		}else{
+			w.WriteHeader(400)
+			w.Write([]byte(`{"status":"Fill in all required fields"}`))
+			return		
+		}
+	}else{
+		w.WriteHeader(404)
+		w.Write([]byte(`{"status":"Invalid login session."}`))
+		return
+	}
+
+	w.WriteHeader(200)
+	w.Write([]byte(`{"status":"Success"}`))	
 }

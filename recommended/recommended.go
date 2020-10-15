@@ -237,7 +237,7 @@ func (r *SaveRecommended) SaveRecommended() error{
 	err = recommend.QueryRow(book_id,r.Module).Scan(&recommend_id)
 
 	if err == sql.ErrNoRows {
-		iRecommend,err := db.Prepare("INSERT (book_id,module_id) INTO recommended VALUES(?,?)")
+		iRecommend,err := db.Prepare("INSERT INTO recommended (book_id,module_id) VALUES(?,?)")
 
 		if err != nil{
 			return err
