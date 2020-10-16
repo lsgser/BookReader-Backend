@@ -255,5 +255,5 @@ func (r *SaveRecommended) SaveRecommended() error{
 		return err
 	}
 
-	return err
+	return nil
 }
