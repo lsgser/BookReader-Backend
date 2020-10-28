@@ -24,7 +24,8 @@ func GetDB() (*sql.DB,error){
 		return db,err
 	}
 	
-	db.SetMaxOpenConns(1000)
+	//SHOW variables like "max_connections"
+	db.SetMaxOpenConns(100)
 	db.SetMaxIdleConns(300)
 	db.SetConnMaxLifetime(0)
 	return db,nil

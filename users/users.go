@@ -10,10 +10,10 @@ import(
 
 type User struct{
 	ID int64 `json:"-"`
-	School int64 `json:"school"`
-	Faculty int64 `json:"faculty"`
-	Course int64 `json:"course"`
-	Student string `json:"student"`
+	School int64 `json:"school,omitempty"`
+	Faculty int64 `json:"faculty,omitempty"`
+	Course int64 `json:"course,omitempty"`
+	Student string `json:"student,omitempty"`
 	Name string `json:"name"`
 	Surname string `json:"surname"`
 	Email string `json:"email"`
@@ -71,8 +71,59 @@ func GetUser(student string) (User,error){
 		return user,err
 	}
 
+	user.Picture = imagePath+strings.Split(user.Picture,"/")[3]
+
 	return user,nil
 }
+
+func GetUserByToken(token string) (User,error){
+	user := User{}
+	db,err := CO.GetDB()
+
+	if err != nil{
+		err = errors.New("DB connection error")
+		return user,err
+	}
+
+	var(
+		user_id int64
+	)
+
+	hashedToken := CO.HashData(token)
+
+	stmtID,err := db.Prepare("SELECT user_id FROM login_tokens WHERE token = ?")
+
+	if err != nil{
+		return user,err
+	}
+
+	defer stmtID.Close()
+
+	err = stmtID.QueryRow(hashedToken).Scan(&user_id)
+
+	if err != nil{
+		return user,err
+	}
+
+	stmt,err := db.Prepare("SELECT student_nr,name,surname,email,picture FROM users WHERE id = ?")
+
+	if err != nil{
+		return user,err
+	}
+
+	defer stmt.Close()
+
+	err = stmt.QueryRow(user_id).Scan(&user.Student,&user.Name,&user.Surname,&user.Email,&user.Picture)
+
+	if err != nil{
+		return user,err
+	}
+
+	user.Picture = imagePath+strings.Split(user.Picture,"/")[3]
+
+	return user,nil	
+}
+
 /************************************************************************************
 					These functions will be for strictly the admin user
 
@@ -104,7 +155,7 @@ func GetUsers() ([]User,error){
 	for rows.Next(){
 		user := User{}
 		rows.Scan(&user.School,&user.Faculty,&user.Course,&user.Student,&user.Name,&user.Surname,&user.Email,&user.Picture)
-		user.Picture = imagePath+strings.Split(user.Picture,"/")[4]
+		user.Picture = imagePath+strings.Split(user.Picture,"/")[3]
 		users = append(users,user)
 	}
 
@@ -137,7 +188,7 @@ func GetUsersBySchool(school int64) ([]User,error){
 	for rows.Next(){
 		user := User{}
 		rows.Scan(&user.School,&user.Faculty,&user.Course,&user.Student,&user.Name,&user.Surname,&user.Email,&user.Picture)
-		user.Picture = imagePath+strings.Split(user.Picture,"/")[4]
+		user.Picture = imagePath+strings.Split(user.Picture,"/")[3]
 		users = append(users,user)
 	}
 
@@ -170,7 +221,7 @@ func GetUsersByFaculty(faculty int64) ([]User,error){
 	for rows.Next(){
 		user := User{}
 		rows.Scan(&user.School,&user.Faculty,&user.Course,&user.Student,&user.Name,&user.Surname,&user.Email,&user.Picture)
-		user.Picture = imagePath+strings.Split(user.Picture,"/")[4]
+		user.Picture = imagePath+strings.Split(user.Picture,"/")[3]
 		users = append(users,user)
 	}
 
@@ -203,7 +254,7 @@ func GetUsersByCourse(course int64) ([]User,error){
 	for rows.Next(){
 		user := User{}
 		rows.Scan(&user.School,&user.Faculty,&user.Course,&user.Student,&user.Name,&user.Surname,&user.Email,&user.Picture)
-		user.Picture = imagePath+strings.Split(user.Picture,"/")[4]
+		user.Picture = imagePath+strings.Split(user.Picture,"/")[3]
 		users = append(users,user)
 	}
 	

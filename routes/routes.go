@@ -46,6 +46,7 @@ func NewRouter() *httprouter.Router {
 	
 	//Users
 	router.GET("/user/:s",U.ShowUser)
+	router.GET("/user_t/:t",U.ShowUserByToken)
 	router.GET("/users",U.ShowUsers)
 	router.GET("/user_s/:s",U.ShowUsersBySchool)
 	router.GET("/user_f/:f",U.ShowUsersByFaculty)

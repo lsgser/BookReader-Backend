@@ -34,6 +34,33 @@ func ShowUser(w http.ResponseWriter , req *http.Request , params httprouter.Para
 	}
 }
 
+func ShowUserByToken(w http.ResponseWriter , req *http.Request , params httprouter.Params){
+	CO.AddSafeHeaders(&w)
+	token := params.ByName("t")
+
+	if token == ""{
+		w.WriteHeader(400)
+		w.Write([]byte(`{"status":"No token provided"}`))		
+		return
+	}
+
+	user,err := GetUserByToken(token)
+
+	if err != nil{
+		w.WriteHeader(500)
+		w.Write([]byte(`{"status":"`+err.Error()+`"}`))		
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(user)
+
+	if err != nil{
+		w.WriteHeader(500)
+		w.Write([]byte(`{"status":"Something went wrong"}`))
+		return
+	}
+}
+
 func ShowUsers(w http.ResponseWriter , req *http.Request , _ httprouter.Params){
 	CO.AddSafeHeaders(&w)
 	users,err := GetUsers()
