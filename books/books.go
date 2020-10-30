@@ -166,6 +166,8 @@ func (b *Book) SaveBook() error{
 		return err
 	}
 
+	defer stmt.Close()
+	
 	_,err = stmt.Exec(b.Title,strings.Title(strings.ToLower(b.Author)),b.PublishDate,b.ISBN,b.CoverPage,b.Description,b.Book)
 	
 

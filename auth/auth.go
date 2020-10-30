@@ -193,6 +193,7 @@ func AuthAdmin(email string,password string)(string,error){
 		if err != nil{
 			return "",err
 		}
+		defer delAdmin.Close()
 		_,err = delAdmin.Exec(id)
 		if err != nil{
 			return "",err
@@ -221,6 +222,7 @@ func AuthAdmin(email string,password string)(string,error){
 	if err != nil{
 		return "",err
 	}
+	defer authQuery.Close()
 
 	_,err = authQuery.Exec(id,hashedToken)
 
@@ -299,6 +301,8 @@ func AuthUser(unique_text string,password string) (string,error){
 		if err != nil{
 			return "",err
 		}
+		defer delAdmin.Close()
+
 		_,err = delAdmin.Exec(id)
 		if err != nil{
 			return "",err
@@ -374,6 +378,8 @@ func DeleteAdminAuth(token string) error{
 		return err
 	}
 
+	defer logoutStmt.Close()
+
 	_,err = logoutStmt.Exec(hashedToken)
 	
 	if err != nil{
@@ -419,6 +425,8 @@ func DeleteUserAuth(token string) error{
 	if err != nil{
 		return err
 	}
+
+	defer logoutStmt.Close() 
 
 	_,err = logoutStmt.Exec(hashedToken)
 	
