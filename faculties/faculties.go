@@ -44,11 +44,14 @@ func GetFaculties(s int64) ([]Faculty, error) {
 		return faculties, err
 	}
 
+	defer database.Close()
+
 	rows, err := database.Query("SELECT * FROM faculties WHERE school_id=?", s)
 
 	if err != nil {
 		return faculties, err
 	}
+
 	defer rows.Close()
 
 	for rows.Next() {
@@ -73,6 +76,8 @@ func GetFaculty(f int64) (Faculty, error) {
 		err := errors.New("DB connection error")
 		return faculty, err
 	}
+
+	defer database.Close()
 
 	idQuery, err := database.Prepare("SELECT * FROM faculties WHERE id=?")
 
@@ -104,6 +109,8 @@ func (f *Faculty) SaveFaculty() error{
 		return err
 	}
 
+	defer db.Close()
+
 	var school string
 	schoolQuery, err := db.Prepare("SELECT school FROM schools WHERE id=?")
 
@@ -125,6 +132,8 @@ func (f *Faculty) SaveFaculty() error{
 	if err != nil{
 		return err
 	}
+	
+	defer stmt.Close()
 	/*
 		strings.Title makes the first letter of every word a 
 		uppercase

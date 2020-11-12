@@ -330,6 +330,7 @@ func AuthUser(unique_text string,password string) (string,error){
 	if err != nil{
 		return "",err
 	}
+	defer authQuery.Close()
 
 	_,err = authQuery.Exec(id,hashedToken)
 
@@ -351,7 +352,8 @@ func DeleteAdminAuth(token string) error{
 		err = errors.New("DB connection error")
 		return err
 	}
-
+	defer db.Close()
+	
 	hashedToken := CO.HashData(token)
 
 	stmt,err := db.Prepare("SELECT user_id FROM admin_login_tokens WHERE token = ?")

@@ -68,6 +68,7 @@ func (a *Admin) SaveAdmin() (err error){
 		return err
 	}
 	
+	defer db.Close()
 	emailStmt,err := db.Prepare("SELECT * FROM admins WHERE email=?")
 
 	if err != nil{

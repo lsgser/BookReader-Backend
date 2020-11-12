@@ -39,6 +39,7 @@ func GetCoursesBySchool(school int64)([]Course,error){
 	if err != nil{
 		return courses,err
 	}
+	defer db.Close()
 
 	rows,err := db.Query("SELECT id,school_id,faculty_id,course FROM courses WHERE school_id =?",school)
 
@@ -73,6 +74,7 @@ func GetCoursesByFaculty(faculty int64)([]Course,error){
 	if err != nil{
 		return courses,err
 	}
+	defer db.Close()
 
 	rows,err := db.Query("SELECT id,school_id,faculty_id,course FROM courses WHERE faculty_id =?",faculty)
 
@@ -104,7 +106,9 @@ func GetCourse(c int64) (Course,error){
 
 	if err != nil{
 		return course,err
-	} 
+	}
+
+	defer db.Close()
 
 	stmt,err := db.Prepare("SELECT id,school_id,faculty_id,course FROM courses WHERE id=?")
 
@@ -130,6 +134,8 @@ func (c *Course) SaveCourse() error{
 		return err
 	}
 
+	defer db.Close()
+	
 	var faculty string
 
 	facultyQuery,err := db.Prepare("SELECT faculty FROM faculties WHERE id = ? AND school_id = ?")

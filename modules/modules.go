@@ -40,6 +40,8 @@ func GetModulesBySchool(school int64) ([]Module, error) {
 		return modules, err
 	}
 
+	defer database.Close()
+
 	rows, err := database.Query("SELECT * FROM modules WHERE school_id =? ", school)
 
 	if err != nil {
@@ -71,6 +73,7 @@ func GetModulesByFaculty(faculty int64) ([]Module, error) {
 	if err != nil {
 		return modules, err
 	}
+	defer database.Close()
 
 	rows, err := database.Query("SELECT * FROM modules WHERE faculty_id =?", faculty)
 
@@ -105,6 +108,8 @@ func GetModulesByCourse(course int64) ([]Module, error) {
 		return modules, err
 	}
 
+	defer database.Close()
+
 	rows, err := database.Query("SELECT * FROM modules WHERE course_id =?", course)
 
 	if err != nil {
@@ -129,7 +134,9 @@ func GetCourseModuleByName(course int64,moduleName string) ([]Module,error){
 	if err != nil {
 		return modules, err
 	}
-	
+
+	defer database.Close()
+
 	moduleName = "%"+moduleName+"%"
 
 	rows, err := database.Query("SELECT * FROM modules WHERE course_id =? AND module LIKE ?", course,moduleName)
@@ -161,6 +168,8 @@ func GetModule(m int64) (Module, error) {
 		return module, err
 	}
 
+	defer database.Close()
+
 	statement, err := database.Prepare("SELECT * FROM modules WHERE id =?")
 
 	if err != nil {
@@ -188,6 +197,8 @@ func (m *Module) SaveModule() error{
 		err = errors.New("DB connection error")
 		return err
 	}
+
+	defer db.Close()
 
 	var course string
 
@@ -235,6 +246,8 @@ func (m *Module) SaveModule() error{
 		return err
 	}
 
+	defer stmt.Close()
+	
 	_,err = stmt.Exec(m.School,m.Faculty,m.Course,strings.Title(strings.ToLower(m.Module)))
 
 	return err

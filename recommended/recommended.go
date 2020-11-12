@@ -52,6 +52,8 @@ func GetRecommendedByBook(isbn string) ([]RecommendedISBN,error){
 		return recommended,err
 	}
 
+	defer db.Close()
+
 	var book_id int64
 
 	book, err := db.Prepare("SELECT id FROM books WHERE isbn=?")
@@ -95,6 +97,8 @@ func GetRecommendedByModule(module int64) (RecommendedISBN,error){
 		err = errors.New("DB connection error")
 		return recommend,err
 	}
+
+	defer db.Close()
 
 	var (
 		book_id int64
@@ -150,6 +154,8 @@ func GetRecommendedByModuleAndBook(isbn string,module int64) (RecommendedISBN,er
 		return recommend,err
 	}
 
+	defer db.Close()
+
 	var (
 		book_id int64
 		recommend_id int64
@@ -193,6 +199,9 @@ func (r *SaveRecommended) SaveRecommended() error{
 		err = errors.New("DB connection error")
 		return err
 	}
+
+	defer db.Close()
+
 	var (
 		book_id int64
 		recommend_id int64
@@ -243,6 +252,8 @@ func (r *SaveRecommended) SaveRecommended() error{
 			return err
 		}
 
+		defer iRecommend.Close()
+		
 		_,err = iRecommend.Exec(book_id,r.Module)
 
 		if err != nil{

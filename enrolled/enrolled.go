@@ -43,6 +43,8 @@ func GetEnrolledByModule(module int64) ([]Enrol,error){
 		return enrolled,err
 	}
 
+	defer db.Close()
+
 	rows,err := db.Query("SELECT * FROM enrolled WHERE module_id = ?",module)
 
 	if err != nil{
@@ -68,7 +70,8 @@ func GetEnrolledByUser(user string) ([]Enrol,error){
 		err = errors.New("DB connection error")
 		return enrolled,err
 	}
-	
+	defer db.Close()
+
 	stmt,err := db.Prepare("SELECT id FROM users WHERE student_nr=?")
 
 	if err != nil{
@@ -114,6 +117,9 @@ func GetEnrolledModules(user string) ([]M.Module,error){
 		err = errors.New("DB connection error")
 		return modules,err			
 	}
+
+	defer db.Close()
+
 	stmt,err := db.Prepare("SELECT id FROM users WHERE student_nr=?")
 
 	if err != nil{
@@ -121,6 +127,7 @@ func GetEnrolledModules(user string) ([]M.Module,error){
 	}
 
 	defer stmt.Close()
+
 	var user_id int64
 	err = stmt.QueryRow(user).Scan(&user_id)
 	
@@ -175,6 +182,8 @@ func GetEnrolledUsers(module int64) ([]U.User,error){
 		return users,err
 	}
 
+	defer db.Close()
+
 	rows,err := db.Query("SELECT * FROM enrolled WHERE module_id = ?",module)
 
 	if err != nil{
@@ -215,6 +224,7 @@ func (e *SaveEnrol)SaveEnrolled() error{
 		return err
 	}
 
+	defer db.Close()
 
 	var (
 		user_id int64
@@ -252,6 +262,8 @@ func (e *SaveEnrol)SaveEnrolled() error{
 			return err
 		}
 
+		defer insertEnrol.Close()
+		
 		_,err = insertEnrol.Exec(e.Module,user_id)
 
 		if err != nil{

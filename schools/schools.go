@@ -49,6 +49,8 @@ func GetSchools() ([]School,error){
 		return schools,err
 	}
 
+	defer db.Close()
+
 	rows,err := db.Query("SELECT school,school_icon FROM schools")
 
 	if err != nil{
@@ -75,6 +77,7 @@ func GetSchool(school string) (School,error){
 	if err != nil{
 		return s,err
 	}
+	defer db.Close()
 
 	stmt,err := db.Prepare("SELECT id,school,school_icon FROM schools WHERE school=?")
 
@@ -99,6 +102,7 @@ func (s *School) SaveSchool() (err error){
 	if err != nil{
 		return err
 	}
+	defer db.Close()
 
 	s.School = strings.ToUpper(strings.TrimSpace(s.School))
 
@@ -141,6 +145,8 @@ func (s *EditForm) EditSchool() (err error){
 		return err
 	}
 
+	defer db.Close()
+
 	if s.NewSchoolName == "" && s.NewSchoolIcon == ""{
 		err = errors.New("Edit fields are both empty")
 		return err
@@ -172,7 +178,7 @@ func (s *EditForm) EditSchool() (err error){
 				if err != nil{
 					return err
 				}
-
+				defer editNameStmt.Close()
 				_,err = editNameStmt.Exec(s.NewSchoolName,school.School)
 
 			}else{
@@ -186,6 +192,8 @@ func (s *EditForm) EditSchool() (err error){
 			if err != nil{
 				return err
 			}
+
+			defer editIconStmt.Close()
 
 			_,err = editIconStmt.Exec(s.NewSchoolIcon,school.School)
 
@@ -217,6 +225,8 @@ func DeleteSchool(school string,token string) (err error){
 			return err
 		}
 
+		defer delSchool.Close()
+		
 		_,err = delSchool.Exec(school)
 	}else{
 		err = errors.New("Select an institution to delete")

@@ -55,7 +55,7 @@ func GetBook(isbn string) (Book,error){
 		err = errors.New("DB connection error")
 		return book,err
 	}
-
+	defer db.Close()
 
 	stmt,err := db.Prepare("SELECT * FROM books WHERE isbn = ?")
 
@@ -92,6 +92,7 @@ func GetBooks() ([]Book,error){
 		return books,err
 	}
 
+	defer db.Close()
 	rows,err := db.Query("SELECT * FROM books")
 
 	if err != nil{
@@ -133,6 +134,8 @@ func GetBooksByQuery(query string) ([]Book,error){
 		return books,err
 	}
 
+	defer db.Close()
+
 	rows,err := db.Query("SELECT * FROM books WHERE title LIKE ? OR author LIKE ? OR isbn LIKE ?",query,query,query)
 
 	if err != nil {
@@ -160,6 +163,8 @@ func (b *Book) SaveBook() error{
 		return err
 	}
 
+	defer db.Close()
+	
 	stmt,err := db.Prepare("INSERT INTO books (title,author,publish_date,isbn,cover_page,description,book) VALUES (?,?,?,?,?,?,?)")
 	
 	if err != nil{

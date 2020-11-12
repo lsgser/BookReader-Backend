@@ -38,6 +38,7 @@ func GetRequiredByUser(user string) ([]Required,error){
 		err = errors.New("Database connection error")
 		return required,err
 	}
+	defer db.Close()
 
 	stmt,err := db.Prepare("SELECT id FROM users WHERE student_nr = ?")
 
@@ -79,6 +80,7 @@ func GetRequiredByModule(module int64) ([]Required,error){
 		err = errors.New("Database connection error")
 		return required,err
 	}
+	defer db.Close()
 
 	rows,err := db.Query("SELECT * FROM required WHERE module_id = ?",module)
 
@@ -106,6 +108,7 @@ func GetRequiredByBook(isbn string) ([]Required,error){
 		return required,err
 	}
 
+	defer db.Close()
 	stmt,err := db.Prepare("SELECT id FROM books WHERE isbn = ?")
 
 	if err != nil{
@@ -152,6 +155,8 @@ func (r *SaveRequired) SaveRequired() error{
 		err = errors.New("Database connection error")
 		return err
 	}
+	
+	defer db.Close()
 
 	stmtBook,err := db.Prepare("SELECT id FROM books WHERE isbn = ?")
 

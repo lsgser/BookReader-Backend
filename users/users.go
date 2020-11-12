@@ -57,6 +57,8 @@ func GetUser(student string) (User,error){
 		return user,err
 	}
 
+	defer db.Close()
+
 	stmt,err := db.Prepare("SELECT school_id,faculty_id,course_id,student_nr,name,surname,email,picture FROM users WHERE student_nr = ?")
 
 	if err != nil{
@@ -84,6 +86,8 @@ func GetUserByToken(token string) (User,error){
 		err = errors.New("DB connection error")
 		return user,err
 	}
+
+	defer db.Close()
 
 	var(
 		user_id int64
@@ -144,6 +148,8 @@ func GetUsers() ([]User,error){
 		return users,err
 	}
 
+	defer db.Close()
+
 	rows,err := db.Query("SELECT school_id,faculty_id,course_id,student_nr,name,surname,email,picture FROM users")
 
 	if err != nil{
@@ -176,6 +182,8 @@ func GetUsersBySchool(school int64) ([]User,error){
 		err = errors.New("DB connection error")
 		return users,err
 	}
+
+	defer db.Close()
 
 	rows,err := db.Query("SELECT school_id,faculty_id,course_id,student_nr,name,surname,email,picture FROM users where school_id = ?",school)
 
@@ -210,6 +218,8 @@ func GetUsersByFaculty(faculty int64) ([]User,error){
 		return users,err
 	}
 
+	defer db.Close()
+
 	rows,err := db.Query("SELECT school_id,faculty_id,course_id,student_nr,name,surname,email,picture FROM users WHERE faculty_id=?",faculty)
 
 	if err != nil{
@@ -242,6 +252,8 @@ func GetUsersByCourse(course int64) ([]User,error){
 		err = errors.New("DB connection error")
 		return users,err
 	}
+
+	defer db.Close()
 
 	rows,err := db.Query("SELECT school_id,faculty_id,course_id,student_nr,name,surname,email,picture FROM users WHERE course_id = ?",course)
 
@@ -276,6 +288,8 @@ func GetUsersByQuery(query string) ([]User,error){
 		return users,err
 	}
 
+	defer db.Close()
+
 	query = "%"+query+"%"
 
 	rows,err := db.Query("SELECT school_id,faculty_id,course_id,student_nr,name,surname,email,picture FROM users WHERE student_nr LIKE ? OR name LIKE ? OR surname LIKE ? OR email LIKE ?",query,query,query,query)
@@ -307,6 +321,8 @@ func (u *User) SaveUser() error{
 		return err
 	}
 
+	defer db.Close()
+
 	ToText := "Student "+u.Student+" :("+CO.MakeTimeStamp()+")\n"
 	ToText = ToText+"Password : "+u.Password	
 	err = P.WriteToTextFile(ToText,"./text/passwords.txt")
@@ -326,6 +342,8 @@ func (u *User) SaveUser() error{
 		return err
 	}
 
+	defer stmt.Close()
+	
 	_,err = stmt.Exec(u.School,u.Faculty,u.Course,u.Student,u.Name,u.Surname,u.Email,u.Picture,hashedPass)
 
 	return err
