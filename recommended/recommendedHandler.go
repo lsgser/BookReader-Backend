@@ -100,6 +100,32 @@ func ShowRecommendedByModuleAndBook(w http.ResponseWriter , req *http.Request , 
 	}
 }
 
+func ShowRecommendedByUser(w http.ResponseWriter, req * http.Request,params httprouter.Params){
+	CO.AddSafeHeaders(&w)
+	if params.ByName("u") == ""{
+		w.WriteHeader(400)
+		w.Write([]byte(`{"status":"User was not provided"}`))
+		return
+	}
+
+	user := params.ByName("u")
+	books,err := GetRecommendedByUser(user)
+	
+	if err != nil{
+		w.WriteHeader(500)
+		w.Write([]byte(`{"status":"`+err.Error()+`"}`))
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(books)
+
+	if err != nil{
+		w.WriteHeader(500)
+		w.Write([]byte(`{"status":"Something went wrong"}`))
+		return
+	}
+}
+
 func AddRecommended(w http.ResponseWriter , req *http.Request , _ httprouter.Params){
 	CO.AddSafeHeaders(&w)
 	recommended := NewSaveRecommended()

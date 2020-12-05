@@ -1,4 +1,3 @@
-
 DROP TABLE IF EXISTS `admin`;
 
 CREATE TABLE `admins` (

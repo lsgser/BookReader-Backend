@@ -85,6 +85,7 @@ func NewRouter() *httprouter.Router {
 	router.GET("/recommended_by_book/:isbn",RE.ShowRecommendedByBook)
 	router.GET("/recommended_by_module/:m",RE.ShowRecommendedByModule)
 	router.GET("/recommended_by_m_and_b/:m/:isbn",RE.ShowRecommendedByModuleAndBook)
+	router.GET("/recommended_by_user/:u",RE.ShowRecommendedByUser)
 	router.POST("/new_recommend",RE.AddRecommended)
 
 	/*serve institution images*/

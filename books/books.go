@@ -26,6 +26,14 @@ var (
 	bookPath = "/b/"
 )
 
+func ImagePath() string{
+	return imagePath
+}
+
+func BookPath() string{
+	return bookPath
+}
+
 /*
 	NewBook() function returns a Book pointer struct
 */

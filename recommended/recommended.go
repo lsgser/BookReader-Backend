@@ -4,6 +4,11 @@ import(
 	CO "../config"
 	"errors"
 	"database/sql"
+	"strings"
+	//M "../modules"
+	B "../books"
+	E "../enrolled"
+	"log"
 )
 
 type Recommended struct{
@@ -12,6 +17,20 @@ type Recommended struct{
 	Module int64 `json:"module"`
 	CreatedAt string `json:"created_at,omitempty"`
 	UpdatedAt string `json:"updated_at,omitempty"`
+}
+
+type RecommendedModuleAndBook struct{
+	ID int64 `json:"-"`
+	Title string `json:"title"`
+	Author string `json:"author"`
+	PublishDate string `json:"publish_date"`
+	ISBN string `json:"isbn"`
+	CoverPage string `json:"cover_page"`
+	Description string `json:"description,omitempty"`
+	Book string `json:"book"`
+	CreatedAt string `json:"created_at,omitempty"`
+	UpdatedAt string `json:"updated_at,omitempty"`
+	Module string `json:"module"`
 }
 
 type SaveRecommended struct{
@@ -180,6 +199,8 @@ func GetRecommendedByModuleAndBook(isbn string,module int64) (RecommendedISBN,er
 		return recommend,err
 	}
 
+	defer r.Close()
+
 	err = r.QueryRow(book_id,module).Scan(&recommend_id)
 
 	if err != nil{
@@ -191,6 +212,113 @@ func GetRecommendedByModuleAndBook(isbn string,module int64) (RecommendedISBN,er
 
 	return recommend,err
 }
+/*
+	Get all the recommended books via the modules that the user enrolled for
+*/
+func GetRecommendedByUser(user string) ([]RecommendedModuleAndBook,error){
+	log.Println(user)
+	recommendedModulesAndBooks := make([]RecommendedModuleAndBook,0)
+	recommended := make([]Recommended,0)
+	enrollments := make([]E.Enrol,0)
+
+	db,err := CO.GetDB()
+
+	if err != nil{
+		err = errors.New("DB connection error")
+		return recommendedModulesAndBooks,err
+	}
+
+	defer db.Close()
+
+	var user_id int64
+
+	u,err := db.Prepare("SELECT id FROM users WHERE student_nr = ?")
+
+	if err != nil{
+		return recommendedModulesAndBooks,err
+	}
+
+	defer u.Close()
+
+	err = u.QueryRow(user).Scan(&user_id)
+	log.Println(user_id)
+	if err != nil{
+		return recommendedModulesAndBooks,err
+	}
+
+	enrollRows,err := db.Query("SELECT module_id,user_id FROM enrolled WHERE user_id = ?",user_id)
+
+	if err != nil{
+		return recommendedModulesAndBooks,err
+	}
+
+	defer enrollRows.Close()
+
+	for enrollRows.Next(){
+		enr := E.Enrol{}
+		enrollRows.Scan(&enr.Module,&enr.User)
+		enrollments = append(enrollments,enr)
+	}
+
+	/*
+		Query the recommended books for a specific module based on 
+		what the student enrolled for
+	*/
+	for _ , enrol := range enrollments{
+		rec := Recommended{}
+		recommend,err := db.Prepare("SELECT book_id,module_id FROM recommended WHERE module_id = ?")
+
+		if err != nil{
+			return recommendedModulesAndBooks,err
+		}
+
+		defer recommend.Close()
+		
+		err = recommend.QueryRow(enrol.Module).Scan(&rec.Book,&rec.Module)
+		if err != nil{
+			return recommendedModulesAndBooks,err
+		}
+
+		recommended = append(recommended,rec)
+	}
+
+	for _,book := range recommended{
+		moduleAndBook := RecommendedModuleAndBook{}
+		bookQuery,err := db.Prepare("SELECT * FROM books WHERE id = ?")
+
+		if err != nil{
+			return recommendedModulesAndBooks,err
+		}
+
+		defer bookQuery.Close()
+
+		err = bookQuery.QueryRow(book.Book).Scan(&moduleAndBook.ID,&moduleAndBook.Title,&moduleAndBook.Author,&moduleAndBook.PublishDate,&moduleAndBook.ISBN,&moduleAndBook.CoverPage,&moduleAndBook.Description,&moduleAndBook.Book,&moduleAndBook.CreatedAt,&moduleAndBook.UpdatedAt)
+		
+		if err != nil{
+			return recommendedModulesAndBooks,err
+		}
+
+		moduleAndBook.CoverPage = B.ImagePath()+strings.Split(moduleAndBook.CoverPage,"/")[4]
+		moduleAndBook.Book = B.BookPath()+strings.Split(moduleAndBook.Book,"/")[3]
+		/*
+			Query a module name that will go hand in hand with the required books
+			of the user
+		*/
+		moduleQuery,err := db.Prepare("SELECT module FROM modules WHERE id=?")
+		
+		if err != nil{
+			return recommendedModulesAndBooks,err
+		}
+
+		defer moduleQuery.Close()
+
+		err = moduleQuery.QueryRow(book.Module).Scan(&moduleAndBook.Module)
+
+		recommendedModulesAndBooks = append(recommendedModulesAndBooks,moduleAndBook) 
+	}
+
+	return recommendedModulesAndBooks,err
+} 
 
 func (r *SaveRecommended) SaveRecommended() error{
 	db,err := CO.GetDB()
