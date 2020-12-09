@@ -246,7 +246,7 @@ func GetRecommendedByUser(user string) ([]RecommendedModuleAndBook,error){
 		return recommendedModulesAndBooks,err
 	}
 
-	enrollRows,err := db.Query("SELECT module_id,user_id FROM enrolled WHERE user_id = ?",user_id)
+	enrollRows,err := db.Query("SELECT module_id,user_id FROM enrolled WHERE user_id = ? ORDER BY module_id ASC",user_id)
 
 	if err != nil{
 		return recommendedModulesAndBooks,err
@@ -265,8 +265,7 @@ func GetRecommendedByUser(user string) ([]RecommendedModuleAndBook,error){
 		what the student enrolled for
 	*/
 	for _ , enrol := range enrollments{
-		rec := Recommended{}
-		recommend,err := db.Prepare("SELECT book_id,module_id FROM recommended WHERE module_id = ?")
+		recommend,err := db.Query("SELECT book_id,module_id FROM recommended WHERE module_id = ?",enrol.Module)
 
 		if err != nil{
 			return recommendedModulesAndBooks,err
@@ -274,12 +273,12 @@ func GetRecommendedByUser(user string) ([]RecommendedModuleAndBook,error){
 
 		defer recommend.Close()
 		
-		err = recommend.QueryRow(enrol.Module).Scan(&rec.Book,&rec.Module)
-		if err != nil{
-			return recommendedModulesAndBooks,err
+		
+		for recommend.Next(){
+			rec := Recommended{}
+			recommend.Scan(&rec.Book,&rec.Module)
+			recommended = append(recommended,rec)
 		}
-
-		recommended = append(recommended,rec)
 	}
 
 	for _,book := range recommended{
