@@ -6,7 +6,7 @@ import(
 	"github.com/joho/godotenv"
 	"net/http"
 	"github.com/rs/cors"
-	R "./routes"
+	R "example/BookReader-Backend/routes"
 )
 
 func init() {

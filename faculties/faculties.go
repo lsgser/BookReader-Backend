@@ -4,7 +4,7 @@ package faculties
 import (
 	"errors"
 	//"log"
-	CO "../config"
+	CO "example/BookReader-Backend/config"
 	"strings"
 )
 

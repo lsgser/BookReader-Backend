@@ -1,11 +1,11 @@
 package users
 
 import(
-	CO "../config"
+	CO "example/BookReader-Backend/config"
 	"strings"
 	"errors"
-	A "../auth"
-	P "../processing"
+	A "example/BookReader-Backend/auth"
+	P "example/BookReader-Backend/processing"
 )
 
 type User struct{

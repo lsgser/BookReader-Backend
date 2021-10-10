@@ -1,13 +1,13 @@
 package recommended;
 
 import(
-	CO "../config"
+	CO "example/BookReader-Backend/config"
 	"errors"
 	"database/sql"
 	"strings"
 	//M "../modules"
-	B "../books"
-	E "../enrolled"
+	B "example/BookReader-Backend/books"
+	E "example/BookReader-Backend/enrolled"
 	"log"
 )
 

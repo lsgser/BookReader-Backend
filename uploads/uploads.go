@@ -5,7 +5,7 @@ import(
 	"net/http"
 	"os"
 	"errors"
-	CO "../config"
+	CO "example/BookReader-Backend/config"
 	"mime/multipart"
 )
 

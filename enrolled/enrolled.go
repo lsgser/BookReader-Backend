@@ -1,9 +1,9 @@
 package enrolled
 
 import(
-	CO "../config"
-	M "../modules"
-	U "../users"
+	CO "example/BookReader-Backend/config"
+	M "example/BookReader-Backend/modules"
+	U "example/BookReader-Backend/users"
 	//"strings"
 	"errors"
 	"database/sql"

@@ -2,7 +2,7 @@ package schools
 
 import(
 	"errors"
-	CO "../config"
+	CO "example/BookReader-Backend/config"
 	"strings"
 	//"log"
 )

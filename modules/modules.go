@@ -1,7 +1,7 @@
 package modules
 
 import (
-	CO "../config"
+	CO "example/BookReader-Backend/config"
 	"strings"
 	"errors"
 	//"log"

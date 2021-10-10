@@ -5,8 +5,8 @@ import(
 	"net/http"
 	"strconv"
 	"github.com/julienschmidt/httprouter"
-	CO "../config"
-	A "../auth"
+	CO "example/BookReader-Backend/config"
+	A "example/BookReader-Backend/auth"
 )
 
 func ShowModulesBySchool(w http.ResponseWriter,req *http.Request,params httprouter.Params){

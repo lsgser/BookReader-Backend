@@ -4,9 +4,9 @@ import(
 	"encoding/json"
 	"net/http"
 	"github.com/julienschmidt/httprouter"
-	CO "../config"
-	A "../auth"
-	UP "../uploads"
+	CO "example/BookReader-Backend/config"
+	A "example/BookReader-Backend/auth"
+	UP "example/BookReader-Backend/uploads"
 )
 
 //Handler responsible for displaying a single book based on its ISBN

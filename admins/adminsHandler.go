@@ -4,7 +4,7 @@ import(
 	"encoding/json"
 	"net/http"
 	"github.com/julienschmidt/httprouter"
-	CO "../config"
+	CO "example/BookReader-Backend/config"
 )
 
 /*

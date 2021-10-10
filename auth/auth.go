@@ -1,12 +1,12 @@
 package auth
 
 import(
-	CO "../config"
+	CO "example/BookReader-Backend/config"
 	"github.com/badoux/checkmail"
 	"strings"
 	"database/sql"
 	"errors"
-	P "../processing"
+	P "example/BookReader-Backend/processing"
 	//"log"
 	//"unicode/utf8"
 )

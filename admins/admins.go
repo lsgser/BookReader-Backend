@@ -1,8 +1,8 @@
 package admins
 
 import(
-	CO "../config"
-	A "../auth"
+	CO "example/BookReader-Backend/config"
+	A "example/BookReader-Backend/auth"
 	"errors"
 	"strings"
 	"github.com/badoux/checkmail"

@@ -1,7 +1,7 @@
 package required
 
 import(
-	CO "../config"
+	CO "example/BookReader-Backend/config"
 	"errors"
 )
 

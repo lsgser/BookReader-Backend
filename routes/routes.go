@@ -1,16 +1,16 @@
 package routes
 
 import (
-	F "../faculties"
-	C "../courses"
-	M "../modules"
-	B "../books"
-	U "../users"
-	E "../enrolled"
-	S "../schools"
-	R "../required"
-	A "../admins"
-	RE "../recommended"
+	F "example/BookReader-Backend/faculties"
+	C "example/BookReader-Backend/courses"
+	M "example/BookReader-Backend/modules"
+	B "example/BookReader-Backend/books"
+	U "example/BookReader-Backend/users"
+	E "example/BookReader-Backend/enrolled"
+	S "example/BookReader-Backend/schools"
+	R "example/BookReader-Backend/required"
+	A "example/BookReader-Backend/admins"
+	RE "example/BookReader-Backend/recommended"
 	"net/http"
 	"github.com/julienschmidt/httprouter"
 )

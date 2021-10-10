@@ -4,9 +4,9 @@ import(
 	"encoding/json"
 	"net/http"
 	"github.com/julienschmidt/httprouter"
-	CO "../config"
-	UP "../uploads"
-	A "../auth"
+	CO "example/BookReader-Backend/config"
+	UP "example/BookReader-Backend/uploads"
+	A "example/BookReader-Backend/auth"
 	//"net/url"
 )
 

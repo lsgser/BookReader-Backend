@@ -4,9 +4,9 @@ import(
 	"encoding/json"
 	"net/http"
 	"strconv"
-	CO "../config"
+	CO "example/BookReader-Backend/config"
 	"github.com/julienschmidt/httprouter"
-	A "../auth"
+	A "example/BookReader-Backend/auth"
 )
 
 func ShowRecommendedByBook(w http.ResponseWriter , req *http.Request , params httprouter.Params){
